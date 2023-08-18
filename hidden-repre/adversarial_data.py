@@ -107,31 +107,7 @@ for batch_id, (images, labels) in enumerate(trainloader):
     else:
         adv_train_img.append(images.squeeze().tolist())
         adv_train_label.append(labels.item())
-        
-
-# adv_test_img = []
-# adv_test_label = []
-# for batch_id, (images, labels) in enumerate(testloader):
-#     if batch_id in adv_test:
-#         images, labels = images.to(device), labels.to(device)
-#         images.requires_grad = True
-#         # Forward pass to get the logits
-#         logits = net(images)
-#         # Calculate the loss
-#         loss = criterion(logits, labels)
-#         # Zero the gradients
-#         net.zero_grad()
-#         # Backward pass to calculate the gradients
-#         loss.backward()
-#         # Collect the gradient of the input images
-#         gradient = images.grad.data
-#         # Perform the FGSM attack to generate perturbed images
-#         perturbed_images = fgsm_attack(images, eps, gradient)
-#         adv_test_img.append(perturbed_images.squeeze().cpu().detach().tolist())
-#         adv_test_label.append(labels.item())
-#     else:
-#         adv_test_img.append(images.squeeze().tolist())
-#         adv_test_label.append(labels.item())
+         
 
 
 np.save(savepath + '/fgsm_train_img.npy', np.array(adv_train_img))
