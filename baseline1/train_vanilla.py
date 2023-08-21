@@ -26,12 +26,12 @@ data_transform_aug = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(32, 4),
         transforms.ToTensor(),
-        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
 ])
 
 data_transform_no_aug = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
 ])
 
 data_transform = data_transform_no_aug if args.no_aug else data_transform_aug
@@ -46,13 +46,13 @@ weight_decay = 1e-4
 milestones = torch.tensor([100, 150])
 n_epochs = 200
 
-trainset = torchvision.datasets.CIFAR10(root='./data/cifar10', train=True,
-                                        download=True, transform=data_transform)
+trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True,
+                                        download=False, transform=data_transform)
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                           shuffle=True, num_workers=8)
 
-testset = torchvision.datasets.CIFAR10(root='./data/cifar10', train=False,
-                                       download=True, transform=data_transform)
+testset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=False,
+                                       download=False, transform=data_transform)
 test_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
                                          shuffle=False, num_workers=8)
 

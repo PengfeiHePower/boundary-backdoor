@@ -90,7 +90,7 @@ elif args.defense == 'FP':
         defense = fine_pruning.FP(
             args,
             prune_ratio=0.99,
-            finetune_epoch=100,
+            finetune_epoch=50,#100
             max_allowed_acc_drop=0.1,
         )
     elif args.dataset == 'gtsrb':

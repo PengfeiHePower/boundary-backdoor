@@ -133,7 +133,7 @@ if args.dataset == 'cifar10':
     else:
         data_transform = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
         ])
 
 elif args.dataset == 'gtsrb':
@@ -146,7 +146,7 @@ elif args.dataset == 'gtsrb':
     else:
         data_transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+            # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
         ])
 
 else:

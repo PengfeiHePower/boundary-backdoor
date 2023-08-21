@@ -90,9 +90,6 @@ class FP(backdoor_defense.BackdoorDefense):
 
         mask: torch.Tensor = self.last_conv.weight_mask
         
-        print('prune_num:', self.prune_num)
-        print('finetune_epoch', self.finetune_epoch)
-        
         assert self.prune_num >= self.finetune_epoch, "prune_ratio too small!"
         self.prune_step(mask, prune_num=max(self.prune_num - self.finetune_epoch, 0))
         # val_atk(self.args, self.model)
