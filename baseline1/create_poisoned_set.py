@@ -25,6 +25,7 @@ parser.add_argument('-alpha', type=float,  required=False,
                     default=config.parser_default['alpha'])
 parser.add_argument('-trigger', type=str,  required=False,
                     default=None)
+parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
 args = parser.parse_args()
 
 tools.setup_seed(0)
@@ -113,7 +114,8 @@ if args.poison_type in ['badnet', 'blend', 'none',
         from poison_tool_box import badnet
         poison_generator = badnet.poison_generator(img_size=img_size, dataset=train_set,
                                                    poison_rate=args.poison_rate, trigger=trigger,
-                                                   path=poison_set_img_dir, target_class=config.target_class[args.dataset])
+                                                   path=poison_set_img_dir, target_class=config.target_class[args.dataset],
+                                                   sampling = args.sampling)
 
     elif args.poison_type == 'blend':
 
@@ -121,7 +123,8 @@ if args.poison_type in ['badnet', 'blend', 'none',
         poison_generator = blend.poison_generator(img_size=img_size, dataset=train_set,
                                                   poison_rate=args.poison_rate, trigger=trigger,
                                                   path=poison_set_img_dir, target_class=config.target_class[args.dataset],
-                                                  alpha=alpha)
+                                                  alpha=alpha,
+                                                  sampling = args.sampling)
 
     elif args.poison_type == 'adaptive_blend':
 

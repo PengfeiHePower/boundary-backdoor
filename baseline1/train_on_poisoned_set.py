@@ -29,8 +29,13 @@ parser.add_argument('-no_normalize', default=False, action='store_true')
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
+parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
 
 args = parser.parse_args()
+print(args)
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print('device:', device)
 
 if args.trigger is None:
     args.trigger = config.trigger_default[args.poison_type]
@@ -56,12 +61,12 @@ if args.dataset == 'cifar10':
             transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
             transforms.ToTensor(),
-            transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
     ])
 
     data_transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
     ])
 
 elif args.dataset == 'gtsrb':

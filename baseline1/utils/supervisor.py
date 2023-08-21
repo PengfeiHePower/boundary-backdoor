@@ -51,20 +51,20 @@ def get_model_dir(args, cleanse=False):
         return f"{get_poison_set_dir(args)}/{get_model_name(args, cleanse=cleanse)}"
 
 def get_dir_core(args, include_model_name=False, include_poison_seed=False):
-    ratio = '%.3f' % args.poison_rate
+    ratio = '%.4f' % args.poison_rate
     # ratio = '%.1f' % (args.poison_rate * 100) + '%'
     if args.poison_type == 'blend':
-        blend_alpha = '%.3f' % args.alpha
-        dir_core = '%s_%s_%s_alpha=%s_trigger=%s' % (args.dataset, args.poison_type, ratio, blend_alpha, args.trigger)
+        blend_alpha = '%.4f' % args.alpha
+        dir_core = '%s_%s_%s_%s_alpha=%s_trigger=%s' % (args.dataset, args.poison_type, args.sampling, ratio, blend_alpha, args.trigger)
     elif args.poison_type == 'adaptive_blend':
-        blend_alpha = '%.3f' % args.alpha
-        cover_rate = '%.3f' % args.cover_rate
-        dir_core = '%s_%s_%s_alpha=%s_cover=%s_trigger=%s' % (args.dataset, args.poison_type, ratio, blend_alpha, cover_rate, args.trigger)
+        blend_alpha = '%.4f' % args.alpha
+        cover_rate = '%.4f' % args.cover_rate
+        dir_core = '%s_%s_%s_%s_alpha=%s_cover=%s_trigger=%s' % (args.dataset, args.poison_type, args.sampling, ratio, blend_alpha, cover_rate, args.trigger)
     elif args.poison_type == 'adaptive_k_way' or args.poison_type == 'adaptive_patch' or args.poison_type == 'TaCT':
-        cover_rate = '%.3f' % args.cover_rate
-        dir_core = '%s_%s_%s_cover=%s' % (args.dataset, args.poison_type, ratio, cover_rate)
+        cover_rate = '%.4f' % args.cover_rate
+        dir_core = '%s_%s_%s_%s_cover=%s' % (args.dataset, args.poison_type, args.sampling, ratio, cover_rate)
     else:
-        dir_core = '%s_%s_%s' % (args.dataset, args.poison_type, ratio)
+        dir_core = '%s_%s_%s_%s' % (args.dataset, args.poison_type, args.sampling, ratio)
 
     if include_model_name:
         dir_core = f'{dir_core}_{get_model_name(args)}'
@@ -75,20 +75,20 @@ def get_dir_core(args, include_model_name=False, include_poison_seed=False):
     return dir_core
 
 def get_poison_set_dir(args):
-    ratio = '%.3f' % args.poison_rate
+    ratio = '%.4f' % args.poison_rate
     # ratio = '%.1f' % (args.poison_rate * 100) + '%'
     if args.poison_type == 'blend':
-        blend_alpha = '%.3f' % args.alpha
-        poison_set_dir = 'poisoned_train_set/%s/%s_%s_alpha=%s_trigger=%s' % (args.dataset, args.poison_type, ratio, blend_alpha, args.trigger)
+        blend_alpha = '%.4f' % args.alpha
+        poison_set_dir = 'poisoned_train_set/%s/%s_%s_%s_alpha=%s_trigger=%s' % (args.dataset, args.poison_type, args.sampling, ratio, blend_alpha, args.trigger)
     elif args.poison_type == 'adaptive_blend':
-        blend_alpha = '%.3f' % args.alpha
-        cover_rate = '%.3f' % args.cover_rate
-        poison_set_dir = 'poisoned_train_set/%s/%s_%s_alpha=%s_cover=%s_trigger=%s' % (args.dataset, args.poison_type, ratio, blend_alpha, cover_rate, args.trigger)
+        blend_alpha = '%.4f' % args.alpha
+        cover_rate = '%.4f' % args.cover_rate
+        poison_set_dir = 'poisoned_train_set/%s/%s_%s_%s_alpha=%s_cover=%s_trigger=%s' % (args.dataset, args.poison_type, args.sampling, ratio, blend_alpha, cover_rate, args.trigger)
     elif args.poison_type == 'adaptive_k_way' or args.poison_type == 'adaptive_patch' or args.poison_type == 'TaCT':
-        cover_rate = '%.3f' % args.cover_rate
-        poison_set_dir = 'poisoned_train_set/%s/%s_%s_cover=%s' % (args.dataset, args.poison_type, ratio, cover_rate)
+        cover_rate = '%.4f' % args.cover_rate
+        poison_set_dir = 'poisoned_train_set/%s/%s_%s_%s_cover=%s' % (args.dataset, args.poison_type, args.sampling, ratio, cover_rate)
     else:
-        poison_set_dir = 'poisoned_train_set/%s/%s_%s' % (args.dataset, args.poison_type, ratio)
+        poison_set_dir = 'poisoned_train_set/%s/%s_%s_%s' % (args.dataset, args.poison_type, args.sampling, ratio)
     
     if config.record_poison_seed: poison_set_dir = f'{poison_set_dir}_poison_seed={config.poison_seed}' # debug
     if config.record_model_arch: poison_set_dir = f'{poison_set_dir}_arch={config.arch[args.dataset].__name__}'

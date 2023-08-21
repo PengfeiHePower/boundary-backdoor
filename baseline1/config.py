@@ -6,7 +6,7 @@ from torchvision import transforms
 import os
 
 
-data_dir = './data' # defaul clean dataset directory
+data_dir = '~/Documents/cse-resarch/data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 target_class = {
     'cifar10' : 0,
@@ -26,6 +26,7 @@ parser_choices = {
     'poison_type': ['badnet', 'blend', 'adaptive_blend', 'adaptive_patch', 'adaptive_k_way', 'none'],
     'poison_rate': [i / 1000.0 for i in range(0, 500)],
     'cover_rate': [i / 1000.0 for i in range(0, 500)],
+    'sampling': ['random', 'boundary']
 }
 
 parser_default = {

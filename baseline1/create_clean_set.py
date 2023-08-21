@@ -28,7 +28,7 @@ args = parser.parse_args()
 """
 Get Data Set
 """
-data_dir = './data' # directory to save standard clean set
+data_dir = '~/Documents/cse-resarch/data' # directory to save standard clean set
 
 if args.dataset == 'gtsrb':
     data_transform = transforms.Compose([

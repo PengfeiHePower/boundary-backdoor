@@ -35,8 +35,11 @@ parser.add_argument('-cleanser', type=str, required=True,
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
+parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
+
 
 args = parser.parse_args()
+print(args)
 
 if args.trigger is None:
     args.trigger = config.trigger_default[args.poison_type]

@@ -6,7 +6,7 @@ from config import poison_seed
 
 class poison_generator():
 
-    def __init__(self, img_size, dataset, poison_rate, trigger, path, target_class = 0):
+    def __init__(self, img_size, dataset, poison_rate, trigger, path, sampling, target_class = 0):
 
         self.img_size = img_size
         self.dataset = dataset
@@ -14,6 +14,7 @@ class poison_generator():
         self.trigger = trigger
         self.path = path  # path to save the dataset
         self.target_class = target_class # by default : target_class = 0
+        self.sampling = sampling
 
         # shape of the patch trigger
         _, self.dx, self.dy = trigger.shape
@@ -30,11 +31,14 @@ class poison_generator():
         posy = self.img_size - self.dy
 
         # random sampling
-        id_set = list(range(0,self.num_img))
-        random.shuffle(id_set)
-        num_poison = int(self.num_img * self.poison_rate)
-        poison_indices = id_set[:num_poison]
-        poison_indices.sort() # increasing order
+        if self.sampling == 'random':
+            id_set = list(range(0,self.num_img))
+            random.shuffle(id_set)
+            num_poison = int(self.num_img * self.poison_rate)
+            poison_indices = id_set[:num_poison]
+            poison_indices.sort() # increasing order
+        else:
+            raise NotImplementedError('%s not implemented' % self.sampling)
 
         label_set = []
         pt = 0
