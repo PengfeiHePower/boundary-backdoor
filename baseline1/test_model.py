@@ -52,12 +52,12 @@ if args.dataset == 'cifar10':
             transforms.RandomHorizontalFlip(),
             transforms.RandomCrop(32, 4),
             transforms.ToTensor(),
-            transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
     ])
 
     data_transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
     ])
 
 elif args.dataset == 'gtsrb':
@@ -65,12 +65,12 @@ elif args.dataset == 'gtsrb':
     data_transform_aug = transforms.Compose([
         transforms.RandomRotation(15),
         transforms.ToTensor(),
-        transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+        # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
     data_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+        # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
 else:
@@ -107,16 +107,16 @@ else:
     raise NotImplementedError('<To Be Implemented> Dataset = %s' % args.dataset)
 
 
-poison_set_dir = supervisor.get_poison_set_dir(args)
-model_path = supervisor.get_model_dir(args, cleanse=(args.cleanser is not None))
+# poison_set_dir = supervisor.get_poison_set_dir(args)
+# model_path = supervisor.get_model_dir(args, cleanse=(args.cleanser is not None))
 
 
 arch = config.arch[args.dataset]
 model = arch(num_classes=num_classes)
-model.load_state_dict(torch.load(model_path))
+model.load_state_dict(torch.load(args.model_path))
 model = nn.DataParallel(model)
 model = model.cuda()
-print("Evaluating model '{}'...".format(model_path))
+print("Evaluating model '{}'...".format(args.model_path))
 
 # Set Up Test Set for Debug & Evaluation
 test_set_dir = os.path.join('clean_set', args.dataset, 'test_split')
