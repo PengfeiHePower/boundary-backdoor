@@ -10,12 +10,12 @@ import argparse
 import config
 from utils import supervisor
 from utils.tools import test
-from . import BackdoorDefense
+from . import backdoor_defense
 from tqdm import tqdm
 from utils.tools import IMG_Dataset
 from .tools import to_list, generate_dataloader, val_atk, unpack_poisoned_train_set, AverageMeter, accuracy, Cutout
 
-class ABL(BackdoorDefense):
+class ABL(backdoor_defense.BackdoorDefense):
     """
     Anti-Backdoor Learning
 
@@ -105,7 +105,7 @@ class ABL(BackdoorDefense):
         self.tf_compose_finetuning = self.data_transform_aug
         self.tf_compose_unlearning = self.data_transform
 
-        self.folder_path = 'other_defenses_tool_box/results/ABL'
+        self.folder_path = 'other_defenses/results/ABL'
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
         
@@ -424,7 +424,7 @@ class ABL(BackdoorDefense):
 
             # evaluate on testing set
             # val_atk(self.args, model_ascent)
-            test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+            test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
         
         # save isolated model
         self.save_checkpoint({
@@ -490,7 +490,7 @@ class ABL(BackdoorDefense):
                 self.learning_rate_finetuning(optimizer, epoch)
                 self.train_step_finetuing(isolate_other_data_loader, model_ascent, optimizer, criterion, epoch + 1)
                 # val_atk(self.args, model_ascent)
-                test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+                test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
 
             # save finetuned model
             self.save_checkpoint({
@@ -517,12 +517,12 @@ class ABL(BackdoorDefense):
             if epoch == 0:
                 # test firstly
                 # val_atk(self.args, model_ascent)
-                test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+                test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
             self.train_step_unlearning(isolate_poisoned_data_loader, model_ascent, optimizer, criterion, epoch + 1)
 
             # evaluate on testing set
             # val_atk(self.args, model_ascent)
-            test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+            test(model_ascent, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
         
         # save unlearned model
         self.save_checkpoint({

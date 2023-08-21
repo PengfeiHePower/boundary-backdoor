@@ -27,8 +27,10 @@ parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-cleanser', type=str, choices=['SCAn', 'AC', 'SS', 'SPECTRE', 'Strip'], default=None)
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
+parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
 
 args = parser.parse_args()
+print(args)
 
 if args.trigger is None:
     args.trigger = config.trigger_default[args.poison_type]
@@ -61,17 +63,17 @@ if args.dataset == 'cifar10':
                                     transforms.RandomHorizontalFlip(),
                                     transforms.RandomCrop(32, 4),
                                     transforms.ToTensor(),
-                                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+                                    # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
                                 ])
 
     data_transform_no_aug = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
     ])
 
     trigger_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
     ])
 
     momentum = 0.9
@@ -87,17 +89,17 @@ elif args.dataset == 'gtsrb':
     data_transform_aug = transforms.Compose([
         transforms.RandomRotation(15),
         transforms.ToTensor(),
-        transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+        # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
     data_transform_no_aug = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+        # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
     trigger_transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+        # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
     momentum = 0.9

@@ -7,11 +7,11 @@ import argparse
 import config
 from utils import supervisor
 from utils.tools import test
-from . import BackdoorDefense
+from . import backdoor_defense
 from .tools import to_list, generate_dataloader, val_atk
 
 
-class FP(BackdoorDefense):
+class FP(backdoor_defense.BackdoorDefense):
     """
     Fine Pruning Defense is described in the paper 'Fine-Pruning'_ by KangLiu. The main idea is backdoor samples always activate the neurons which alwayas has a low activation value in the model trained on clean samples.
 
@@ -56,7 +56,7 @@ class FP(BackdoorDefense):
             raise Exception('There is no Conv2d in model.')
         length = last_conv.out_channels
         self.prune_num = int(length * self.prune_ratio)
-        self.folder_path = 'other_defenses_tool_box/results/FP'
+        self.folder_path = 'other_defenses/results/FP'
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
         self.valid_loader = generate_dataloader(dataset=self.dataset,
@@ -73,7 +73,7 @@ class FP(BackdoorDefense):
 
     def detect(self):
         # self.ori_clean_acc = val_atk(self.args, self.model)[0]
-        self.ori_clean_acc, _ = test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+        self.ori_clean_acc, _ = test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
         self.prune()
 
     def prune(self):
@@ -90,16 +90,19 @@ class FP(BackdoorDefense):
 
         mask: torch.Tensor = self.last_conv.weight_mask
         
+        print('prune_num:', self.prune_num)
+        print('finetune_epoch', self.finetune_epoch)
+        
         assert self.prune_num >= self.finetune_epoch, "prune_ratio too small!"
         self.prune_step(mask, prune_num=max(self.prune_num - self.finetune_epoch, 0))
         # val_atk(self.args, self.model)
-        test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+        test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
 
         for i in range(min(self.finetune_epoch, length)):
             print('\nIter: %d/%d' % (i + 1, min(self.finetune_epoch, length)))
             self.prune_step(mask, prune_num=1)
             # clean_acc = val_atk(self.args, self.model)[0]
-            clean_acc, _ = test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+            clean_acc, _ = test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
             if self.ori_clean_acc - clean_acc > self.max_allowed_acc_drop: # stop if accuracy drop too much
                 break
         
@@ -108,7 +111,7 @@ class FP(BackdoorDefense):
         torch.save(self.model.state_dict(), result_file)
         print('Fine-Pruned Model Saved at:', result_file)
         # val_atk(self.args, self.model)
-        test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes, all_to_all=('all_to_all' in self.args.dataset))
+        test(self.model, test_loader=self.test_loader, poison_test=True, poison_transform=self.poison_transform, num_classes=self.num_classes, source_classes=self.source_classes)#all_to_all=('all_to_all' in self.args.dataset)
 
     @torch.no_grad()
     def prune_step(self, mask: torch.Tensor, prune_num: int = 1):

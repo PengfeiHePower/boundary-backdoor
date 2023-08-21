@@ -10,13 +10,13 @@ import numpy as np
 from sklearn import metrics
 from tqdm import tqdm
 from .tools import AverageMeter, generate_dataloader, tanh_func, to_numpy, jaccard_idx, normalize_mad, unpack_poisoned_train_set
-from . import BackdoorDefense
+from . import backdoor_defense
 import config, os
 from utils import supervisor
 from matplotlib import pyplot as plt
 
 
-class STRIP(BackdoorDefense):
+class STRIP(backdoor_defense.BackdoorDefense):
     name: str = 'strip'
 
     def __init__(self, args, strip_alpha: float = 0.5, N: int = 64, defense_fpr: float = 0.05, batch_size=128):
@@ -26,7 +26,7 @@ class STRIP(BackdoorDefense):
         self.strip_alpha: float = strip_alpha
         self.N: int = N
         self.defense_fpr = defense_fpr
-        self.folder_path = 'other_defenses_tool_box/results/STRIP'
+        self.folder_path = 'other_defenses/results/STRIP'
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
         self.train_loader = generate_dataloader(dataset=self.dataset,

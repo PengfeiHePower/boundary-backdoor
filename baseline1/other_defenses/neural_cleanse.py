@@ -19,12 +19,12 @@ import time
 import datetime
 from tqdm import tqdm
 from .tools import AverageMeter, generate_dataloader, tanh_func, to_numpy, jaccard_idx, normalize_mad, val_atk
-from . import BackdoorDefense
+from . import backdoor_defense
 from utils import supervisor
 import random
 
 # Neural Cleanse!
-class NC(BackdoorDefense):
+class NC(backdoor_defense.BackdoorDefense):
     def __init__(self, args, epoch: int = 10, batch_size = 32,
                  init_cost: float = 1e-3, cost_multiplier: float = 1.5, patience: float = 10,
                  attack_succ_threshold: float = 0.99, early_stop_threshold: float = 0.99):
@@ -47,7 +47,7 @@ class NC(BackdoorDefense):
         self.early_stop_patience: float = self.patience * 2
 
         # My configuration
-        self.folder_path = 'other_defenses_tool_box/results/NC'
+        self.folder_path = 'other_defenses/results/NC'
         if not os.path.exists(self.folder_path):
             os.mkdir(self.folder_path)
         self.criterion = torch.nn.CrossEntropyLoss()

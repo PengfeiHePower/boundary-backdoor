@@ -1,5 +1,5 @@
 import torch
-from other_defenses import NC, STRIP, FP, ABL
+from other_defenses import neural_cleanse, strip, fine_pruning, anti_backdoor_learning
 import argparse, config, os, sys
 from utils import supervisor, tools
 import time
@@ -31,6 +31,8 @@ parser.add_argument('-defense', type=str, required=True,
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
+parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
+
 
 args = parser.parse_args()
 
@@ -65,7 +67,7 @@ if args.log:
 start_time = time.perf_counter()
 
 if args.defense == 'NC':
-    defense = NC(
+    defense = neural_cleanse.NC(
         args,
         epoch=30,
         batch_size=32,
@@ -75,7 +77,7 @@ if args.defense == 'NC':
         )
     defense.detect()
 elif args.defense == 'STRIP':
-    defense = STRIP(
+    defense = strip.STRIP(
         args,
         strip_alpha=1.0,
         N=100,
@@ -85,14 +87,14 @@ elif args.defense == 'STRIP':
     defense.detect()
 elif args.defense == 'FP':
     if args.dataset == 'cifar10':
-        defense = FP(
+        defense = fine_pruning.FP(
             args,
             prune_ratio=0.99,
             finetune_epoch=100,
             max_allowed_acc_drop=0.1,
         )
     elif args.dataset == 'gtsrb':
-        defense = FP(
+        defense = fine_pruning.FP(
             args,
             prune_ratio=0.75,
             finetune_epoch=100,
@@ -102,7 +104,7 @@ elif args.defense == 'FP':
     defense.detect()
 elif args.defense == 'ABL':
     if args.dataset == 'cifar10':
-        defense = ABL(
+        defense = anti_backdoor_learning.ABL(
             args,
             isolation_epochs=15,
             isolation_ratio=0.001,
@@ -119,7 +121,7 @@ elif args.defense == 'ABL':
         )
         defense.detect()
     elif args.dataset == 'gtsrb':
-        defense = ABL(
+        defense = anti_backdoor_learning.ABL(
             args,
             isolation_epochs=5,
             isolation_ratio=0.005,
