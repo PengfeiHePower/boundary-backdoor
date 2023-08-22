@@ -1,0 +1,11 @@
+
+Lmod is automatically replacing "Python/3.6.4" with "Conda/3".
+
+Namespace(method='tsne', dataset='cifar10', poisonsaver='synthesis/cifar10/adversarial_data/resnet18/fgsm_train_all5000', no_aug=True, modelpath='pretrained_models/resnet18.pth', no_normalize=True, figuresaver='figures/cifar10/fgsm_rn18_all5000/')
+/mnt/home/hepengf1/anaconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:563: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(_create_warning_msg(
+Begin visualization..
+/mnt/home/hepengf1/anaconda3/lib/python3.9/site-packages/sklearn/manifold/_t_sne.py:795: FutureWarning: The default initialization in TSNE will change from 'random' to 'pca' in 1.2.
+  warnings.warn(
+/mnt/home/hepengf1/anaconda3/lib/python3.9/site-packages/sklearn/manifold/_t_sne.py:805: FutureWarning: The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
+  warnings.warn(

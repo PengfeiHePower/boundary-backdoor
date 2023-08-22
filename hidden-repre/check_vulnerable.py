@@ -54,43 +54,7 @@ transform_train = transforms.Compose([
     # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-########### for cifar100
-# trainset = torchvision.datasets.CIFAR100(
-#     root='~/Documents/cse-resarch/data', train=True, download=False, transform=transform_train)
-# trainloader = torch.utils.data.DataLoader(
-#     trainset, batch_size=1, shuffle=False, num_workers=2)
-# testset = torchvision.datasets.CIFAR100(
-#     root='~/Documents/cse-resarch/data', train=False, download=False, transform=transform_train)
-# testloader = torch.utils.data.DataLoader(
-#     testset, batch_size=1, shuffle=False, num_workers=2)
-# #prepare model
-# print('==> Preparing model..')
-# from models_cf100 import *
-# net = ResNet18()
-# net = net.to(device)
-# checkpoint = torch.load('pretrained_models/rn18-cf100.pth')
-# state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}
-# net.load_state_dict(state_dict)
-# net.eval()
 
-##for cifar10
-# trainset = torchvision.datasets.CIFAR10(
-#     root='~/Documents/cse-resarch/data', train=True, download=False, transform=transform_train)
-# trainloader = torch.utils.data.DataLoader(
-#     trainset, batch_size=1, shuffle=False, num_workers=2)
-# testset = torchvision.datasets.CIFAR10(
-#     root='~/Documents/cse-resarch/data', train=False, download=False, transform=transform_train)
-# testloader = torch.utils.data.DataLoader(
-#     testset, batch_size=1, shuffle=False, num_workers=2)
-# #prepare model
-# print('==> Preparing model..')
-# from models import *
-# net = ResNet18()
-# net = net.to(device)
-# checkpoint = torch.load('pretrained_models/resnet18-80.pth')
-# state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}
-# net.load_state_dict(state_dict)
-# net.eval()
 
 ##for synthesis
 ###fgsm

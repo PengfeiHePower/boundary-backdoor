@@ -1,0 +1,10 @@
+
+Lmod is automatically replacing "Python/3.6.4" with "Conda/3".
+
+Namespace(epsilon=0.01568627450980392, model='resnet18', checkpoint='./pretrained_models/resnet18.pth', rate=0.1)
+==> Preparing data..
+/mnt/home/hepengf1/anaconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:563: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(_create_warning_msg(
+Directory 'synthesis/cifar10/adversarial_data/resnet18' already exists.
+==> Preparing model..
+Adversarial data saved.

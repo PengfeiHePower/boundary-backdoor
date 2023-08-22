@@ -26,6 +26,8 @@ parser.add_argument('-alpha', type=float,  required=False,
 parser.add_argument('-trigger', type=str,  required=False,
                     default=None)
 parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
+parser.add_argument('-synpath', type=str, required=False, help='path of synthesis data')
+parser.add_argument('-poisonIDpath', type=str, default=None, help='path of poisoned IDs')
 args = parser.parse_args()
 
 tools.setup_seed(0)
@@ -55,6 +57,18 @@ elif args.dataset == 'cifar10':
     ])
     train_set = datasets.CIFAR10(os.path.join(data_dir, 'cifar10'), train=True,
                                     download=True, transform=data_transform)
+    img_size = 32
+    num_classes = 10
+elif args.dataset == 'synthesis-cifar10':
+    data_transform = transforms.Compose([
+        transforms.ToTensor(),
+    ])
+    from utils import synthesis_loader
+    if args.synpath == None:
+        raise  NotImplementedError('Synthesis path can not be empty!')
+    else:
+        # trainpath = '../hidden-repre/synthesis/cifar10/adversarial_data/resnet18/fgsm_train'
+        train_set = synthesis_loader.PoisonTransferCIFAR10Pair(datapath = args.synpath, train=True, transform=data_transform, download=False)
     img_size = 32
     num_classes = 10
 elif args.dataset == 'cifar100':
@@ -115,7 +129,8 @@ if args.poison_type in ['badnet', 'blend', 'none',
         poison_generator = badnet.poison_generator(img_size=img_size, dataset=train_set,
                                                    poison_rate=args.poison_rate, trigger=trigger,
                                                    path=poison_set_img_dir, target_class=config.target_class[args.dataset],
-                                                   sampling = args.sampling)
+                                                   sampling = args.sampling,
+                                                   poisonID = args.poisonIDpath)
 
     elif args.poison_type == 'blend':
 

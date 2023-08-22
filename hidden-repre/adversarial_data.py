@@ -19,6 +19,7 @@ parser.add_argument('--epsilon', default=4/255, type=float,
                     help='noise size')
 parser.add_argument('--model', type=str, default=None)
 parser.add_argument('--checkpoint', type=str, default='./pretrained_models/resnet18.pth')
+parser.add_argument('--rate', type=float, default = 0.1)
 args = parser.parse_args()
 print(args)
 
@@ -26,11 +27,10 @@ print(args)
 print('==> Preparing data..')
 transform_train = transforms.Compose([
     transforms.ToTensor(),
-    # transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
 trainset = torchvision.datasets.CIFAR10(
-    root='~/Documents/cse-resarch/data', train=True, download=False, transform=transform_train)
+    root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=1, shuffle=False, num_workers=2)
 # testset = torchvision.datasets.CIFAR10(
@@ -51,10 +51,12 @@ else:
 
 
 #select adversarial samples
-adv_train = [i for i in range(len(trainset)) if trainset[i][1]==1]
+# adv_train = [i for i in range(len(trainset)) if trainset[i][1]==1]
+adv_train = [i for i in range(len(trainset))]
+adv_num = int(args.rate * len(adv_train))
 # adv_test = [i for i in range(len(testset)) if trainset[i][1]==1]
 import random
-adv_train = random.sample(adv_train, 2000)
+adv_train = random.sample(adv_train, adv_num)
 # adv_test = random.sample(adv_test, 200)
 np.save(savepath + '/fgsm_adv_train_ids.npy', np.array(adv_train))
 # np.save('synthesis/cifar10/adversarial_data/fgsm_adv_test_ids.npy', np.array(adv_test))
@@ -110,8 +112,8 @@ for batch_id, (images, labels) in enumerate(trainloader):
          
 
 
-np.save(savepath + '/fgsm_train_img.npy', np.array(adv_train_img))
-np.save(savepath + '/fgsm_train_label.npy', np.array(adv_train_label))
+np.save(savepath + '/fgsm_train_all'+str(adv_num)+'_img.npy', np.array(adv_train_img))
+np.save(savepath + '/fgsm_train_all'+str(adv_num)+'_label.npy', np.array(adv_train_label))
 
 # np.save('synthesis/cifar10/adversarial_data/fgsm_test_img.npy', np.array(adv_test_img))
 # np.save('synthesis/cifar10/adversarial_data/fgsm_test_label.npy', np.array(adv_test_label))

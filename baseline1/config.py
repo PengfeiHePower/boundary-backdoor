@@ -9,7 +9,8 @@ import os
 data_dir = '~/Documents/cse-resarch/data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 target_class = {
-    'cifar10' : 0,
+    'cifar10' : 9,
+    'synthesis-cifar10' : 9,
     'gtsrb' : 2
 }
 
@@ -22,7 +23,7 @@ record_poison_seed = False
 record_model_arch = False
 
 parser_choices = {
-    'dataset': ['gtsrb','cifar10', 'cifar100', 'imagenette'],
+    'dataset': ['gtsrb','cifar10', 'cifar100', 'imagenette', 'synthesis-cifar10'],
     'poison_type': ['badnet', 'blend', 'adaptive_blend', 'adaptive_patch', 'adaptive_k_way', 'none'],
     'poison_rate': [i / 1000.0 for i in range(0, 500)],
     'cover_rate': [i / 1000.0 for i in range(0, 500)],
@@ -47,10 +48,11 @@ trigger_default = {
 }
 
 arch = {
-    'cifar10': resnet.resnet20,
+    'cifar10': resnet.ResNet18,
+    'synthesis-cifar10': resnet.ResNet18,
     # 'cifar10': vgg.vgg16_bn,
     # 'cifar10': mobilenetv2.mobilenetv2,
-    'gtsrb' : resnet.resnet20,
+    'gtsrb' : resnet.ResNet18,
     'abl':  wresnet.WideResNet
 }
 

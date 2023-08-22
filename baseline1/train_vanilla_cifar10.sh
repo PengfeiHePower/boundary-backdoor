@@ -10,6 +10,6 @@
 
 module load Conda/3
 module load Conda/3
-source activate gp
+source activate bb
 
 python train_vanilla.py -dataset cifar10 -epoch 200
