@@ -69,6 +69,20 @@ if args.dataset == 'cifar10':
             # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
     ])
 
+elif args.dataset == 'synthesis-cifar10':
+
+    data_transform_aug = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomCrop(32, 4),
+            transforms.ToTensor(),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+    ])
+
+    data_transform = transforms.Compose([
+            transforms.ToTensor(),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+    ])
+
 elif args.dataset == 'gtsrb':
 
     data_transform_aug = transforms.Compose([
@@ -92,6 +106,15 @@ else:
 batch_size = 128
 
 if args.dataset == 'cifar10':
+    num_classes = 10
+    arch = config.arch[args.dataset]
+    momentum = 0.9
+    weight_decay = 1e-4
+    epochs = 200
+    milestones = torch.tensor([100, 150])
+    learning_rate = 0.1
+
+elif args.dataset == 'synthesis-cifar10':
     num_classes = 10
     arch = config.arch[args.dataset]
     momentum = 0.9
