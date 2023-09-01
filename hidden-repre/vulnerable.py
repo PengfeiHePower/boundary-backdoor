@@ -31,7 +31,7 @@ print(args)
 class PoisonTransferCIFAR10Pair(CIFAR10):
     """CIFAR10 Dataset.
     """
-    def __init__(self, datapath, root='~/Documents/cse-resarch/data', train=True, transform=None, download=True):
+    def __init__(self, datapath, root='~/Documents/cse-resarch/data/cifar10', train=True, transform=None, download=True):
         super(PoisonTransferCIFAR10Pair, self).__init__(root=root, train=train, download=download, transform=transform)
         self.datapath = datapath
         self.data = (np.load(self.datapath + '_img.npy').transpose([0, 2, 3, 1]) * 255).astype(np.uint8)
@@ -101,31 +101,16 @@ for batch_idx, (inputs, targets) in enumerate(trainloader):
     output = net(inputs)
     confidence = normalize(output[0])
     values, indices = torch.topk(confidence, k=2)
-    # print('indices:', indices)
     easy_score = values[0]-values[1]
     easy_scores.append(easy_score.item())
     top1.append(values[0].item())
-    if easy_score < eps:
+    if easy_score <= eps:
         easy_ids.append(batch_idx)
         if indices[1]==targets:#keep wrong labels
             easy_label.append(indices[0].item())
         else:
             easy_label.append(indices[1].item())
         true_label.append(targets.item())
-        # easy_scores.append(easy_score.item())
-# import matplotlib.pyplot as plt
-# plt.hist(easy_scores, bins=10, edgecolor='black')
-# plt.xlabel('Value')
-# plt.ylabel('Frequency')
-# plt.title('Histogram')
-# plt.savefig('figure/cifar10/scores_te.png')
-# plt.clf()
-# plt.hist(top1, bins=10, edgecolor='black')
-# plt.xlabel('Value')
-# plt.ylabel('Frequency')
-# plt.title('Histogram')
-# plt.savefig('figure/cifar10/top1_te.png')
-# input(111)
 # save vulnerable ids
 if not os.path.isdir(args.idsaver):
     os.mkdir(args.idsaver)

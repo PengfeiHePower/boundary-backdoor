@@ -58,7 +58,7 @@ adv_num = int(args.rate * len(adv_train))
 import random
 adv_train = random.sample(adv_train, adv_num)
 # adv_test = random.sample(adv_test, 200)
-np.save(savepath + '/fgsm_adv_train_ids.npy', np.array(adv_train))
+# np.save(savepath + '/fgsm_adv_train_ids.npy', np.array(adv_train))
 # np.save('synthesis/cifar10/adversarial_data/fgsm_adv_test_ids.npy', np.array(adv_test))
 
 eps = args.epsilon

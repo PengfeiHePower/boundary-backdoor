@@ -36,6 +36,7 @@ parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
 parser.add_argument('-sampling', type=str, default='random', help='sampling stretagy')
+# parser.add_argument('-synpath', type=str, required=False, help='path of synthesis data')
 
 
 args = parser.parse_args()
@@ -64,6 +65,19 @@ save_path = supervisor.get_cleansed_set_indices_dir(args)
 arch = config.arch[args.dataset]
 
 if args.dataset == 'cifar10':
+
+    num_classes = 10
+    if args.no_normalize:
+        data_transform = transforms.Compose([
+            transforms.ToTensor(),
+        ])
+    else:
+        data_transform = transforms.Compose([
+            transforms.ToTensor(),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+        ])
+        
+elif args.dataset == 'synthesis-cifar10':
 
     num_classes = 10
     if args.no_normalize:
