@@ -4,3 +4,4 @@ poisoned_train_set/
 jobs/
 core.*
 other_defenses/results/
+sbatch/
