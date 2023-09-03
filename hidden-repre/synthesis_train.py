@@ -20,9 +20,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 parser = argparse.ArgumentParser(description='syhthesis-train')
 parser.add_argument('--datapath', default='synthesis/cifar10/adversarial_data/resnet18/fsgm_train_all50000', type=str)
 parser.add_argument('--lr_max', default=0.1, type=float, help='learning rate')
-parser.add_argument('--batch', default=128, type=int, help='batch size')
+parser.add_argument('--batch', default=256, type=int, help='batch size')
 parser.add_argument('--epochs', default = 200, type=int, help='training epochs')
-parser.add_argument('--modelsaver', default = 'pretrained/fsgm_syn_rn18.pth')
+parser.add_argument('--modelsaver', default = 'pretrained_models/fsgm_rn18_syn_all50000')
 args = parser.parse_args()
 print(args)
 
@@ -93,7 +93,8 @@ def test(epoch, net, testloader):
         'net': net.state_dict(),
         'epoch': epoch,
     }
-    torch.save(state, args.modelsaver)
+    torch.save(state, args.modelsaver+'.pth')
+    torch.save(state, args.modelsaver+'.pt')
 
 #prepare data
 transform_train = transforms.Compose([
