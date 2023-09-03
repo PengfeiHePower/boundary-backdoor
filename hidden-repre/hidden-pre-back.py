@@ -23,7 +23,7 @@ parser.add_argument('--alpha_te', default=0.2, type=float, help='weight of trigg
 parser.add_argument('--trigger', default='hellokitty_32.png',  type=str, help='trigger name')
 parser.add_argument('--idsaver', default='vulnerable/cifar10/fgsm3-rn18-e02/', type=str)
 parser.add_argument('--target', default=1, type=int, help='target class')
-parser.add_argument('--savepath', default = 'poisoned/cifar10/fgsm-rn18-e02-t/', type=str)
+parser.add_argument('--savepath', default = 'poisoned/cifar10/fgsm-rn18-e02/', type=str)
 parser.add_argument('--pr', default = 0.01, type=float, help='poison rate')
 parser.add_argument('--atktype', type=str, choices=['targeted', 'untargeted'])
 parser.add_argument('--advclass', type=int, required=False)

@@ -12,4 +12,4 @@ module load Conda/3
 module load Conda/3
 source activate bb
 
-python -u visualize_all.py --method tsne --dataset cifar10 --poisonsaver synthesis/cifar10/adversarial_data/resnet18/fgsm_train_all10000 --modelpath pretrained_models/resnet18.pth --figuresaver figures/cifar10/fgsm_rn18_all10000/ --no_aug
+python -u visualize_all.py --method tsne --dataset cifar10 --poisonsaver synthesis/cifar10/adversarial_data/resnet18/fgsm_train_all50000 --modelpath pretrained_models/resnet18.pth --figuresaver figures/cifar10/fgsm_rn18_all50000/ --no_aug
