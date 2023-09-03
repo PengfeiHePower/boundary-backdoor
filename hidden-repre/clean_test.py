@@ -18,7 +18,7 @@ from torchvision.datasets import CIFAR10
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 parser = argparse.ArgumentParser(description='clean train test')
-parser.add_argument('--datapath', default='synthesis/cifar10/adversarial_data/resnet18/fgsm_train_all10000', type=str)
+parser.add_argument('--datapath', default='synthesis/cifar10/adversarial_data/resnet18/fgsm_train_all50000', type=str)
 parser.add_argument('--modelpath', default = 'pretrained_models/resnet18.pth')
 parser.add_argument('--model', type=str, default='resnet18')
 args = parser.parse_args()

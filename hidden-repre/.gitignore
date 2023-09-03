@@ -3,3 +3,4 @@ synthesis/
 pretrained_models/
 figures/
 log/
+*.sh
