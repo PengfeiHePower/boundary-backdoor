@@ -9,3 +9,4 @@ Begin visualization..
   warnings.warn(
 /mnt/home/hepengf1/anaconda3/lib/python3.9/site-packages/sklearn/manifold/_t_sne.py:805: FutureWarning: The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
   warnings.warn(
+Saved figure at figures/cifar10/fgsm_rn18_all50000/synthesis_all.png
