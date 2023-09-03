@@ -9,7 +9,7 @@ class Blended(object):
         self.mode = mode
         self.target = target
         self.trigger = Image.open('./triggers/{}.jpg'.format(trigger)).resize((self.img_size, self.img_size), Image.BILINEAR)
-        self.ratio = 0.15
+        self.ratio = 0.2
 
     def __call__(self, img, target, backdoor, idx):
         img = img.resize((self.img_size, self.img_size), Image.BILINEAR)
