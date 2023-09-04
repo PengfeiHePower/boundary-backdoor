@@ -127,50 +127,55 @@ if args.poison_type in ['badnet', 'blend', 'none',
 
         from poison_tool_box import badnet
         poison_generator = badnet.poison_generator(img_size=img_size, dataset=train_set,
-                                                   poison_rate=args.poison_rate, trigger=trigger,
-                                                   path=poison_set_img_dir, target_class=config.target_class[args.dataset],
-                                                   sampling = args.sampling,
-                                                   poisonID = args.poisonIDpath)
+                                                poison_rate=args.poison_rate, trigger=trigger,
+                                                path=poison_set_img_dir, target_class=config.target_class[args.dataset],
+                                                sampling = args.sampling,
+                                                poisonID = args.poisonIDpath)
 
     elif args.poison_type == 'blend':
 
         from poison_tool_box import blend
         poison_generator = blend.poison_generator(img_size=img_size, dataset=train_set,
-                                                  poison_rate=args.poison_rate, trigger=trigger,
-                                                  path=poison_set_img_dir, target_class=config.target_class[args.dataset],
-                                                  alpha=alpha,
-                                                  sampling = args.sampling)
+                                                poison_rate=args.poison_rate, trigger=trigger,
+                                                path=poison_set_img_dir, target_class=config.target_class[args.dataset],
+                                                alpha=alpha,
+                                                sampling = args.sampling,
+                                                poisonID = args.poisonIDpath)
 
     elif args.poison_type == 'adaptive_blend':
 
         from poison_tool_box import adaptive_blend
         poison_generator = adaptive_blend.poison_generator(img_size=img_size, dataset=train_set,
-                                                          poison_rate=args.poison_rate,
-                                                          path=poison_set_img_dir, trigger=trigger,
-                                                          pieces=16, mask_rate=0.5,
-                                                          target_class=config.target_class[args.dataset], alpha=alpha,
-                                                          cover_rate=args.cover_rate)
+                                                        poison_rate=args.poison_rate,
+                                                        path=poison_set_img_dir, trigger=trigger,
+                                                        pieces=16, mask_rate=0.5,
+                                                        target_class=config.target_class[args.dataset], alpha=alpha,
+                                                        cover_rate=args.cover_rate,
+                                                        sampling = args.sampling,
+                                                        poisonID = args.poisonIDpath)
     
     elif args.poison_type == 'adaptive_k_way':
 
         from poison_tool_box import adaptive_k_way
         poison_generator = adaptive_k_way.poison_generator(img_size=img_size, dataset=train_set,
-                                                           poison_rate=args.poison_rate,
-                                                           path=poison_set_img_dir,
-                                                           target_class=config.target_class[args.dataset],
-                                                           cover_rate=args.cover_rate)
+                                                        poison_rate=args.poison_rate,
+                                                        path=poison_set_img_dir,
+                                                        target_class=config.target_class[args.dataset],
+                                                        cover_rate=args.cover_rate)
     
     elif args.poison_type == 'adaptive_patch':
 
 
         from poison_tool_box import adaptive_patch
         poison_generator = adaptive_patch.poison_generator(img_size=img_size, dataset=train_set,
-                                                           poison_rate=args.poison_rate,
-                                                           path=poison_set_img_dir,
-                                                           trigger_names=config.adaptive_patch_train_trigger_names[args.dataset],
-                                                           alphas=config.adaptive_patch_train_trigger_alphas[args.dataset],
-                                                           target_class=config.target_class[args.dataset],
-                                                           cover_rate=args.cover_rate)
+                                                        poison_rate=args.poison_rate,
+                                                        path=poison_set_img_dir,
+                                                        trigger_names=config.adaptive_patch_train_trigger_names[args.dataset],
+                                                        alphas=config.adaptive_patch_train_trigger_alphas[args.dataset],
+                                                        target_class=config.target_class[args.dataset],
+                                                        cover_rate=args.cover_rate,
+                                                        sampling = args.sampling,
+                                                        poisonID = args.poisonIDpath)
 
     else: # 'none'
         from poison_tool_box import none

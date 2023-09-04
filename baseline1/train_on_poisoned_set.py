@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-dataset', type=str, required=False,
                     default=config.parser_default['dataset'],
                     choices=config.parser_choices['dataset'])
+parser.add_argument('-model', type=str, default='resnet18', help='model type, resnet18, vgg16')
 parser.add_argument('-poison_type', type=str, required=True,
                     choices=config.parser_choices['poison_type'])
 parser.add_argument('-poison_rate', type=float,  required=False,
@@ -107,7 +108,10 @@ batch_size = 128
 
 if args.dataset == 'cifar10':
     num_classes = 10
-    arch = config.arch[args.dataset]
+    if args.model == 'resnet18':
+        arch = config.arch[args.dataset]
+    elif args.model == 'vgg16':
+        arch = config.arch2[args.dataset]
     momentum = 0.9
     weight_decay = 1e-4
     epochs = 200
@@ -116,7 +120,10 @@ if args.dataset == 'cifar10':
 
 elif args.dataset == 'synthesis-cifar10':
     num_classes = 10
-    arch = config.arch[args.dataset]
+    if args.model == 'resnet18':
+        arch = config.arch[args.dataset]
+    elif args.model == 'vgg16':
+        arch = config.arch2[args.dataset]
     momentum = 0.9
     weight_decay = 1e-4
     epochs = 200

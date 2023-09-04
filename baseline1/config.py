@@ -9,8 +9,8 @@ import os
 data_dir = '~/Documents/cse-resarch/data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 target_class = {
-    'cifar10' : 9,
-    'synthesis-cifar10' : 9,
+    'cifar10' : 3,
+    'synthesis-cifar10' : 3,
     'gtsrb' : 2
 }
 
@@ -50,9 +50,14 @@ trigger_default = {
 arch = {
     'cifar10': resnet.ResNet18,
     'synthesis-cifar10': resnet.ResNet18,
-    # 'cifar10': vgg.vgg16_bn,
-    # 'cifar10': mobilenetv2.mobilenetv2,
     'gtsrb' : resnet.ResNet18,
+    'abl':  wresnet.WideResNet
+}
+
+arch2 = {
+    'cifar10': vgg.vgg16_bn,
+    'synthesis-cifar10': vgg.vgg16_bn,
+    'gtsrb' : vgg.vgg16_bn,
     'abl':  wresnet.WideResNet
 }
 

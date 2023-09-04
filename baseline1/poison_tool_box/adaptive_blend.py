@@ -35,7 +35,7 @@ def get_trigger_mask(img_size, total_pieces, masked_pieces):
 
 class poison_generator():
 
-    def __init__(self, img_size, dataset, poison_rate, path, trigger, target_class=0, alpha=0.2, cover_rate=0.01,
+    def __init__(self, img_size, dataset, poison_rate, path, trigger, sampling, poisonID, target_class=0, alpha=0.2, cover_rate=0.01,
                  pieces=16, mask_rate=0.5):
 
         self.img_size = img_size
@@ -54,18 +54,46 @@ class poison_generator():
 
         # number of images
         self.num_img = len(dataset)
+        
+        self.sampling = sampling
+        self.poisonID = poisonID
 
     def generate_poisoned_training_set(self):
 
-        # random sampling
+        # # random sampling
         id_set = list(range(0, self.num_img))
         random.shuffle(id_set)
-        num_poison = int(self.num_img * self.poison_rate)
-        poison_indices = id_set[:num_poison]
-        poison_indices.sort()  # increasing order
+        # num_poison = int(self.num_img * self.poison_rate)
+        # poison_indices = id_set[:num_poison]
+        # poison_indices.sort()  # increasing order
+        # random sampling
+        if self.sampling == 'random':
+            print('Poisons: random sampling.')
+            # id_set = list(range(0,self.num_img))
+            # random.shuffle(id_set)
+            num_poison = int(self.num_img * self.poison_rate)
+            poison_indices = id_set[:num_poison]
+            poison_indices.sort() # increasing order
+        elif self.sampling == 'boundary':
+            print('Poisons: boundary sampling.')
+            num_poison = int(self.num_img * self.poison_rate)
+            if self.poisonID == None:
+                raise NotImplementedError('PoisonID path can not be empty!')
+            else:
+                poison_indices = np.loadtxt(self.poisonID).tolist()
+                if len(poison_indices)<=num_poison:
+                    print('Use full poison set.')
+                else:
+                    random.shuffle(poison_indices)
+                    poison_indices = poison_indices[:num_poison]
+                    poison_indices.sort() # increasing order
+        else:
+            raise NotImplementedError('%s not implemented' % self.sampling)
 
         num_cover = int(self.num_img * self.cover_rate)
-        cover_indices = id_set[num_poison:num_poison + num_cover]  # use **non-overlapping** images to cover
+        cover_cand = [x for x in id_set if x not in poison_indices]
+        # cover_indices = id_set[num_poison:num_poison + num_cover]  # use **non-overlapping** images to cover
+        cover_indices = cover_cand[:num_cover]
         cover_indices.sort()
 
         label_set = []
