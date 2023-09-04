@@ -19,7 +19,7 @@ def search(opts):
     train_transform = build_transform(True, DSET['img_size'], DSET['crop'], DSET['flip'])
     val_transform = build_transform(False, DSET['img_size'], DSET['crop'], DSET['flip'])
     trigger = build_trigger(opts.attack_name, DSET['img_size'], DSET['num_data'], mode=0, target=opts.target, trigger=opts.trigger)
-    train_data = build_data(opts.data_name, opts.data_path, True, trigger, train_transform)
+    train_data = build_data(opts.data_name, opts.data_path, True, trigger, train_transform)#generate triggered samples
     val_data = build_data(opts.data_name, opts.data_path, False, trigger, val_transform)
     poison_num = int(len(train_data.targets) * opts.ratio)
     shuffle = np.arange(len(train_data.targets))[np.array(train_data.targets) != opts.target]  # select poisoned samples from data of non-target classes only
@@ -118,3 +118,4 @@ def search(opts):
 if __name__ == '__main__':
     opts = get_opts()
     search(opts)
+    print('Searching finished.')

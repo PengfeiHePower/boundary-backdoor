@@ -22,6 +22,7 @@ def transfer(opts):
     train_data = build_data(opts.data_name, opts.data_path, True, trigger, train_transform)
     val_data = build_data(opts.data_name, opts.data_path, False, trigger, val_transform)
     samples_idx = np.load(os.path.join(opts.sample_path, '{}.npy'.format(opts.samples_idx)))  # read poison samples idx
+    print('samples_idx:', samples_idx)
     print('poisoned samples len: ', len(samples_idx))
     train_data.data = np.concatenate((train_data.data, train_data.data[samples_idx]), axis=0)  # append selected poisoned samples to the clean train dataset
     train_data.targets = train_data.targets + [train_data.targets[i] for i in samples_idx]

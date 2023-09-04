@@ -108,7 +108,7 @@ def generate_poison_index_from_label_transform(
             p_num = None
             pratio = 1
 
-        if p_num is not None:
+        if p_num is not None: #random generated poison index
             select_position = np.random.choice(len(original_labels), size = p_num, replace=False)
         elif pratio is not None:
             select_position = np.random.choice(len(original_labels), size=round(len(original_labels) * pratio), replace=False)
