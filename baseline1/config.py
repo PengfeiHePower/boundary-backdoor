@@ -69,6 +69,12 @@ adaptive_patch_train_trigger_names = {
         'badnet_patch4_32.png',
         'trojan_square_32.png',
     ],
+    'synthesis-cifar10': [
+        'phoenix_corner_32.png',
+        'firefox_corner_32.png',
+        'badnet_patch4_32.png',
+        'trojan_square_32.png',
+    ],
     'gtsrb': [
         'phoenix_corner_32.png',
         'firefox_corner_32.png',
@@ -79,6 +85,12 @@ adaptive_patch_train_trigger_names = {
 
 adaptive_patch_train_trigger_alphas = {
     'cifar10': [
+        0.5,
+        0.2,
+        0.5,
+        0.3,
+    ],
+    'synthesis-cifar10': [
         0.5,
         0.2,
         0.5,
@@ -97,6 +109,10 @@ adaptive_patch_test_trigger_names = {
         'phoenix_corner2_32.png',
         'badnet_patch4_32.png',
     ],
+    'synthesis-cifar10': [
+        'phoenix_corner2_32.png',
+        'badnet_patch4_32.png',
+    ],
     'gtsrb': [
         'firefox_corner_32.png',
         'trojan_square_32.png',
@@ -105,6 +121,10 @@ adaptive_patch_test_trigger_names = {
 
 adaptive_patch_test_trigger_alphas = {
     'cifar10': [
+        1,
+        1,
+    ],
+    'synthesis-cifar10': [
         1,
         1,
     ],
