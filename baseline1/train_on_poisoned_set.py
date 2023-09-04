@@ -161,7 +161,7 @@ poisoned_set_label_path = os.path.join(poison_set_dir, 'labels')
 poison_indices_path = os.path.join(poison_set_dir, 'poison_indices')
 
 poisoned_set = tools.IMG_Dataset(data_dir=poisoned_set_img_dir,
-                                 label_path=poisoned_set_label_path, transforms=data_transform if args.no_aug else data_transform_aug)
+                                label_path=poisoned_set_label_path, transforms=data_transform if args.no_aug else data_transform_aug)
 
 poisoned_set_loader = torch.utils.data.DataLoader(
     poisoned_set,
@@ -178,17 +178,17 @@ test_set_dir = os.path.join('clean_set', args.dataset, 'test_split')
 test_set_img_dir = os.path.join(test_set_dir, 'data')
 test_set_label_path = os.path.join(test_set_dir, 'labels')
 test_set = tools.IMG_Dataset(data_dir=test_set_img_dir,
-                             label_path=test_set_label_path, transforms=data_transform)
+                            label_path=test_set_label_path, transforms=data_transform)
 test_set_loader = torch.utils.data.DataLoader(
     test_set,
     batch_size=batch_size, shuffle=True, **kwargs)
 
 # Poison Transform for Testing
 poison_transform = supervisor.get_poison_transform(poison_type=args.poison_type, dataset_name=args.dataset,
-                                                   target_class=config.target_class[args.dataset], trigger_transform=data_transform,
-                                                   is_normalized_input=True,
-                                                   alpha=args.alpha if args.test_alpha is None else args.test_alpha,
-                                                   trigger_name=args.trigger, args=args)
+                                                target_class=config.target_class[args.dataset], trigger_transform=data_transform,
+                                                is_normalized_input=True,
+                                                alpha=args.alpha if args.test_alpha is None else args.test_alpha,
+                                                trigger_name=args.trigger, args=args)
 
 # Train Code
 model = arch(num_classes=num_classes)

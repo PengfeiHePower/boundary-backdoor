@@ -106,11 +106,11 @@ adaptive_patch_train_trigger_alphas = {
 
 adaptive_patch_test_trigger_names = {
     'cifar10': [
-        'phoenix_corner2_32.png',
+        'phoenix_corner_32.png',
         'badnet_patch4_32.png',
     ],
     'synthesis-cifar10': [
-        'phoenix_corner2_32.png',
+        'phoenix_corner_32.png',
         'badnet_patch4_32.png',
     ],
     'gtsrb': [
