@@ -5,3 +5,4 @@ jobs/
 core.*
 other_defenses/results/
 sbatch/
+models/

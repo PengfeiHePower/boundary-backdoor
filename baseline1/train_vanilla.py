@@ -14,6 +14,7 @@ parser.add_argument('-no_aug', default=False, action='store_true')
 parser.add_argument('-dataset', type=str, required=False,
                     default=config.parser_default['dataset'],
                     choices=config.parser_choices['dataset'])
+parser.add_argument('-model', type=str, default='resnet18', help='model type, resnet18, vgg16')
 parser.add_argument('-epoch', type=int, required=False,
                     choices=[40, 80, 200], default=200)
 parser.add_argument('-seed', type=int, required=False, default=config.seed)
@@ -49,16 +50,19 @@ n_epochs = 200
 trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True,
                                         download=False, transform=data_transform)
 train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
-                                          shuffle=True, num_workers=8)
+                                        shuffle=True, num_workers=8)
 
 testset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=False,
-                                       download=False, transform=data_transform)
+                                    download=False, transform=data_transform)
 test_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
-                                         shuffle=False, num_workers=8)
+                                        shuffle=False, num_workers=8)
 
 if args.dataset == 'cifar10':
     num_classes = 10
-    arch = config.arch[args.dataset]
+    if args.model == 'resnet18':
+        arch = config.arch[args.dataset]
+    elif args.model == 'vgg16':
+        arch = config.arch2[args.dataset]
     momentum = 0.9
     weight_decay = 1e-4
     if args.epoch == 200: milestones = torch.tensor([100, 150])
@@ -106,17 +110,17 @@ for epoch in range(1, n_epochs + 1):  # train backdoored base model
 
     tools.test(model=model, test_loader=test_loader)
     if args.no_aug:
-        torch.save(model.module.state_dict(), 'models/%s_vanilla_no_aug.pt' % args.dataset)
-        torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_no_aug_seed={args.seed}.pt')
+        torch.save(model.module.state_dict(), 'models/%s_%s_vanilla_no_aug.pt' % (args.dataset, args.model))
+        torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_no_aug_seed={args.seed}.pt')
     else:
-        torch.save(model.module.state_dict(), 'models/%s_vanilla_aug.pt' % args.dataset)
-        torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_aug_seed={args.seed}.pt')
+        torch.save(model.module.state_dict(), 'models/%s_%s_vanilla_aug.pt' % (args.dataset, args.model))
+        torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_aug_seed={args.seed}.pt')
 
 
 if args.no_aug:
-    torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_no_aug.pt')
+    torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_no_aug.pt')
     torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_no_aug_seed={args.seed}.pt')
 else:
-    torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_aug.pt')
-    torch.save(model.module.state_dict(), f'models/{args.dataset}_vanilla_aug_seed={args.seed}.pt')
+    torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_aug.pt')
+    torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_aug_seed={args.seed}.pt')
 print('[Done]')
