@@ -107,8 +107,8 @@ class BadNet(NormalCase):
 
         logging.debug(f"poison train idx is saved")
         torch.save(train_poison_index,
-                   args.save_path + '/train_poison_index_list.pickle',
-                   )
+                args.save_path + '/train_poison_index_list.pickle',
+                )
 
         ### generate train dataset for backdoor attack
         bd_train_dataset = prepro_cls_DatasetBD_v2(
@@ -152,9 +152,9 @@ class BadNet(NormalCase):
         )
 
         self.stage1_results = clean_train_dataset_with_transform, \
-                              clean_test_dataset_with_transform, \
-                              bd_train_dataset_with_transform, \
-                              bd_test_dataset_with_transform
+                            clean_test_dataset_with_transform, \
+                            bd_train_dataset_with_transform, \
+                            bd_test_dataset_with_transform
 
     def stage2_training(self):
         logging.info(f"stage2 start")
@@ -196,11 +196,11 @@ class BadNet(NormalCase):
         from torch.utils.data.dataloader import DataLoader
         trainer.train_with_test_each_epoch_on_mix(
             DataLoader(bd_train_dataset_with_transform, batch_size=args.batch_size, shuffle=True, drop_last=True,
-                       pin_memory=args.pin_memory, num_workers=args.num_workers, ),
+                    pin_memory=args.pin_memory, num_workers=args.num_workers, ),
             DataLoader(clean_test_dataset_with_transform, batch_size=args.batch_size, shuffle=False, drop_last=False,
-                       pin_memory=args.pin_memory, num_workers=args.num_workers, ),
+                    pin_memory=args.pin_memory, num_workers=args.num_workers, ),
             DataLoader(bd_test_dataset_with_transform, batch_size=args.batch_size, shuffle=False, drop_last=False,
-                       pin_memory=args.pin_memory, num_workers=args.num_workers, ),
+                    pin_memory=args.pin_memory, num_workers=args.num_workers, ),
             args.epochs,
             criterion=criterion,
             optimizer=optimizer,

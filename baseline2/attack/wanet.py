@@ -157,8 +157,7 @@ class Wanet(BadNet):
         parser.add_argument("--random_crop", type=int, )  # default=5)
         parser.add_argument("--s", type=float, )  # default=0.5)
         parser.add_argument("--k", type=int, )  # default=4)
-        parser.add_argument(
-            "--grid_rescale", type=float, )  # default=1
+        parser.add_argument("--grid_rescale", type=float, )  # default=1
         return parser
 
     def stage1_non_training_data_prepare(self):
@@ -187,8 +186,8 @@ class Wanet(BadNet):
                                             batch_size=args.batch_size, num_workers=args.num_workers, shuffle=True)
 
         clean_test_dataloader = DataLoader(clean_test_dataset_with_transform, pin_memory=args.pin_memory,
-                                           batch_size=args.batch_size,
-                                           num_workers=args.num_workers, shuffle=True)
+                                          batch_size=args.batch_size,
+                                          num_workers=args.num_workers, shuffle=True)
         self.stage1_results = clean_train_dataset_with_transform, \
                               clean_train_dataloader, \
                               clean_test_dataset_with_transform, \
@@ -238,7 +237,7 @@ class Wanet(BadNet):
             torch.abs(ins))  # scale up, increase var, so that mean of positive part and negative be +1 and -1
         noise_grid = (
             F.upsample(ins, size=args.input_height, mode="bicubic",
-                       align_corners=True)  # here upsample and make the dimension match
+                      align_corners=True)  # here upsample and make the dimension match
                 .permute(0, 2, 3, 1)
                 .to(self.device, non_blocking=args.non_blocking)
         )
@@ -268,8 +267,8 @@ class Wanet(BadNet):
         reversible_test_dataset.wrap_img_transform = transforms_reversible
 
         reversible_test_dataloader = torch.utils.data.DataLoader(reversible_test_dataset, batch_size=args.batch_size,
-                                                                 pin_memory=args.pin_memory,
-                                                                 num_workers=args.num_workers, shuffle=False)
+                                                                pin_memory=args.pin_memory,
+                                                                num_workers=args.num_workers, shuffle=False)
         self.bd_test_dataset = prepro_cls_DatasetBD_v2(
             clean_test_dataset_with_transform.wrapped_dataset, save_folder_path=f"{args.save_path}/bd_test_dataset"
         )
@@ -279,7 +278,7 @@ class Wanet(BadNet):
         for batch_idx, (inputs, targets) in enumerate(reversible_test_dataloader):
             with torch.no_grad():
                 inputs, targets = inputs.to(self.device, non_blocking=args.non_blocking), targets.to(self.device,
-                                                                                                     non_blocking=args.non_blocking)
+                                                                                                    non_blocking=args.non_blocking)
                 bs = inputs.shape[0]
 
                 # Evaluate Backdoor
