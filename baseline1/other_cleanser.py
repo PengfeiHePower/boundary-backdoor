@@ -27,6 +27,7 @@ parser.add_argument('-trigger', type=str,  required=False,
                     default=None)
 parser.add_argument('-no_aug', default=False, action='store_true')
 parser.add_argument('-model', type=str, required=False, default=None)
+parser.add_argument('-modelname', type=str, required=False, default=None)
 parser.add_argument('-model_path', required=False, default=None)
 
 parser.add_argument('-no_normalize', default=False, action='store_true')

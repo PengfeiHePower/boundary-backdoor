@@ -24,6 +24,7 @@ parser.add_argument('-trigger', type=str,  required=False,
                     default=None)
 parser.add_argument('-no_aug', default=False, action='store_true')
 parser.add_argument('-model', type=str, required=False, default=None)
+parser.add_argument('-modelname', type=str, required=False, default=None)
 parser.add_argument('-model_path', required=False, default=None)
 parser.add_argument('-no_normalize', default=False, action='store_true')
 parser.add_argument('-defense', type=str, required=True,
@@ -93,6 +94,13 @@ elif args.defense == 'FP':
             finetune_epoch=50,#100
             max_allowed_acc_drop=0.1,
         )
+    if args.dataset == 'synthesis-cifar10':
+        defense = fine_pruning.FP(
+            args,
+            prune_ratio=0.99,
+            finetune_epoch=50,#100
+            max_allowed_acc_drop=0.1,
+        )
     elif args.dataset == 'gtsrb':
         defense = fine_pruning.FP(
             args,
@@ -104,6 +112,23 @@ elif args.defense == 'FP':
     defense.detect()
 elif args.defense == 'ABL':
     if args.dataset == 'cifar10':
+        defense = anti_backdoor_learning.ABL(
+            args,
+            isolation_epochs=15,
+            isolation_ratio=0.001,
+            # gradient_ascent_type='LGA',
+            gradient_ascent_type='Flooding',
+            gamma=0.01,
+            flooding=0.3,
+            do_isolate=True,
+            finetuning_ascent_model=True,
+            finetuning_epochs=60,
+            unlearning_epochs=5,
+            lr_unlearning=2e-2,
+            do_unlearn=True,
+        )
+        defense.detect()
+    elif args.dataset == 'synthesis-cifar10':
         defense = anti_backdoor_learning.ABL(
             args,
             isolation_epochs=15,

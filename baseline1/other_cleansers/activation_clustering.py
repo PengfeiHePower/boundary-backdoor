@@ -62,6 +62,8 @@ def cleanser(inspection_set, model, num_classes, args, clusters=2):
 
     if args.dataset == 'cifar10':
         threshold = 0.15
+    elif args.dataset == 'synthesis-cifar10':
+        threshold = 0.15
     elif args.dataset == 'gtsrb':
         threshold = 0.25
     elif args.dataset == 'imagenette':

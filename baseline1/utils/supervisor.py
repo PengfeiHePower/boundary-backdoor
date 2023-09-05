@@ -26,7 +26,7 @@ def get_cleansed_set_indices_dir(args):
     if args.cleanser == 'CT': # confusion training    
         return os.path.join(poison_set_dir, f'cleansed_set_indices_seed={args.seed}')
     else:
-        return os.path.join(poison_set_dir, f'cleansed_set_indices_other_{args.cleanser}_{args.model}_seed={args.seed}')
+        return os.path.join(poison_set_dir, f'cleansed_set_indices_other_{args.cleanser}_{args.modelname}_seed={args.seed}')
 
 def get_model_name(args, cleanse=False):
     # `args.model_path` > `args.model` > by default 'full_base'
@@ -39,9 +39,8 @@ def get_model_name(args, cleanse=False):
             model_name = f'full_base_no_aug_seed={args.seed}.pt'
         else:
             model_name = f'full_base_aug_seed={args.seed}.pt'
-        
         if cleanse and hasattr(args, 'cleanser') and args.cleanser is not None:
-            model_name = f"cleansed_{args.cleanser}_{model_name}"
+            model_name = f"cleansed_{args.cleanser}_{args.modelname}_{model_name}"
     return model_name
 
 def get_model_dir(args, cleanse=False):

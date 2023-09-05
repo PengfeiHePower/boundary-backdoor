@@ -96,6 +96,49 @@ class BackdoorDefense():
             self.momentum = 0.9
             self.weight_decay = 1e-4
             self.learning_rate = 0.1
+        elif args.dataset == 'synthesis-cifar10':
+            if args.no_normalize:
+                self.data_transform_aug = transforms.Compose([
+                        transforms.RandomHorizontalFlip(),
+                        transforms.RandomCrop(32, 4),
+                        transforms.ToTensor()
+                ])
+                self.data_transform = transforms.Compose([
+                    transforms.ToTensor()
+                ])
+                self.trigger_transform = transforms.Compose([
+                    transforms.ToTensor(),
+                ])
+                self.normalizer = transforms.Compose([])
+                self.denormalizer = transforms.Compose([])
+            else:
+                self.data_transform_aug = transforms.Compose([
+                        transforms.RandomHorizontalFlip(),
+                        transforms.RandomCrop(32, 4),
+                        transforms.ToTensor(),
+                        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                ])
+                self.data_transform = transforms.Compose([
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                ])
+                self.trigger_transform = transforms.Compose([
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                ])
+                self.normalizer = transforms.Compose([
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                ])
+                self.denormalizer = transforms.Compose([
+                    transforms.Normalize([-0.4914/0.247, -0.4822/0.243, -0.4465/0.261], [1/0.247, 1/0.243, 1/0.261])
+                ])            
+            self.img_size = 32
+            self.num_classes = 10
+            self.input_channel = 3
+            self.shape = torch.Size([3, 32, 32])
+            self.momentum = 0.9
+            self.weight_decay = 1e-4
+            self.learning_rate = 0.1
         elif args.dataset == 'cifar100':
             print('<To Be Implemented> Dataset = %s' % args.dataset)
             exit(0)
@@ -187,7 +230,10 @@ class BackdoorDefense():
 
         self.poison_set_dir = supervisor.get_poison_set_dir(args)
         model_path = supervisor.get_model_dir(args)
-        arch = config.arch[args.dataset]
+        if args.modelname == 'resnet18':
+            arch = config.arch[args.dataset]
+        elif args.modelname == 'vgg16':
+            arch = config.arch2[args.dataset]
         self.model = arch(num_classes=self.num_classes)
         
         if os.path.exists(model_path):

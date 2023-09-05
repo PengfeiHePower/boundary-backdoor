@@ -12,6 +12,7 @@ parser.add_argument('-dataset', type=str, required=False, default=config.parser_
                     choices=config.parser_choices['dataset'])
 parser.add_argument('-poison_type', type=str,  required=True,
         choices=config.parser_choices['poison_type'])
+parser.add_argument('-modelname', type=str, default='resnet18', help='resnet18, vgg16')
 parser.add_argument('-poison_rate', type=float,  required=False,
                     choices=config.parser_choices['poison_rate'],
                     default=config.parser_default['poison_rate'])
@@ -56,6 +57,33 @@ kwargs = {'num_workers': 2, 'pin_memory': True}
 
 
 if args.dataset == 'cifar10':
+
+    num_classes = 10
+
+    data_transform_aug = transforms.Compose([
+                                    transforms.RandomHorizontalFlip(),
+                                    transforms.RandomCrop(32, 4),
+                                    transforms.ToTensor(),
+                                    # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+                                ])
+
+    data_transform_no_aug = transforms.Compose([
+        transforms.ToTensor(),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+    ])
+
+    trigger_transform = transforms.Compose([
+        transforms.ToTensor(),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+    ])
+
+    momentum = 0.9
+    weight_decay = 1e-4
+    milestones = [100, 150]
+    epochs = 200
+    learning_rate = 0.1
+
+elif args.dataset == 'synthesis-cifar10':
 
     num_classes = 10
 
@@ -153,22 +181,24 @@ test_set_dir = os.path.join('clean_set', args.dataset, 'test_split')
 test_set_img_dir = os.path.join(test_set_dir, 'data')
 test_set_label_path = os.path.join(test_set_dir, 'labels')
 test_set = tools.IMG_Dataset(data_dir=test_set_img_dir, label_path=test_set_label_path,
-                                 transforms=data_transform_no_aug)
+                                transforms=data_transform_no_aug)
 test_set_loader = torch.utils.data.DataLoader(
     test_set,
     batch_size=batch_size, shuffle=True, **kwargs)
 
 
-
-arch = config.arch[args.dataset]
+if args.modelname == 'resnet18':
+    arch = config.arch[args.dataset]
+elif args.modelname == 'vgg16':
+    arch = config.arch2[args.dataset]
 
 
 poison_transform = supervisor.get_poison_transform(poison_type=args.poison_type, dataset_name=args.dataset,
-                                                       target_class=config.target_class[args.dataset],
-                                                       trigger_transform=trigger_transform,
-                                                       is_normalized_input=True,
-                                                       alpha=args.alpha if args.test_alpha is None else args.test_alpha,
-                                                       trigger_name=args.trigger, args=args)
+                                                    target_class=config.target_class[args.dataset],
+                                                    trigger_transform=trigger_transform,
+                                                    is_normalized_input=True,
+                                                    alpha=args.alpha if args.test_alpha is None else args.test_alpha,
+                                                    trigger_name=args.trigger, args=args)
 
 
 if args.poison_type == 'TaCT':
