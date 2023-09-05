@@ -48,7 +48,7 @@ def get_transform(opt, train=True, pretensor_transform=False):
         transforms_list.append(transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]))
     elif opt.dataset == "mnist":
         transforms_list.append(transforms.Normalize([0.5], [0.5]))
-    elif opt.dataset == "gtsrb" or opt.dataset == "celeba":
+    elif opt.dataset == "gtsrb" or opt.dataset == "celeba" or opt.dataset == "synthesis-cifar10":
         pass
     else:
         raise Exception("Invalid Dataset")
@@ -147,6 +147,9 @@ def get_dataloader(opt, train=True, pretensor_transform=False):
         dataset = torchvision.datasets.MNIST(opt.data_root, train, transform, download=True)
     elif opt.dataset == "cifar10":
         dataset = torchvision.datasets.CIFAR10(opt.data_root, train, transform, download=True)
+    elif opt.dataset == "synthesis-cifar10":
+        import synthesis_loader
+        dataset = synthesis_loader.PoisonTransferCIFAR10Pair(train=True, transform=transform, download=False)
     elif opt.dataset == "celeba":
         if train:
             split = "train"

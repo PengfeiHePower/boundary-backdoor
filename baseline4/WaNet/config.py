@@ -32,5 +32,7 @@ def get_arguments():
     parser.add_argument(
         "--grid-rescale", type=float, default=1
     )  # scale grid values to avoid pixel values going out of [-1, 1]. For example, grid-rescale = 0.98
+    parser.add_argument("--sampling", type=str, default='random', help='random or boundary')
+    parser.add_argument("--poisonId", type=str, help='directory of poisoned ids')
 
     return parser

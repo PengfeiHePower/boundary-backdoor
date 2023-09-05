@@ -76,6 +76,7 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
         grid_temps2 = grid_temps.repeat(num_cross, 1, 1, 1) + ins / opt.input_height
         grid_temps2 = torch.clamp(grid_temps2, -1, 1)
 
+        #change sampling here
         inputs_bd = F.grid_sample(inputs[:num_bd], grid_temps.repeat(num_bd, 1, 1, 1), align_corners=True)
         if opt.attack_mode == "all2one":
             targets_bd = torch.ones_like(targets[:num_bd]) * opt.target_label
@@ -272,7 +273,7 @@ def eval(
 def main():
     opt = config.get_arguments().parse_args()
 
-    if opt.dataset in ["mnist", "cifar10"]:
+    if opt.dataset in ["mnist", "cifar10", "synthesis-cifar10"]:
         opt.num_classes = 10
     elif opt.dataset == "gtsrb":
         opt.num_classes = 43
@@ -282,6 +283,10 @@ def main():
         raise Exception("Invalid Dataset")
 
     if opt.dataset == "cifar10":
+        opt.input_height = 32
+        opt.input_width = 32
+        opt.input_channel = 3
+    elif opt.dataset == "synthesis-cifar10":
         opt.input_height = 32
         opt.input_width = 32
         opt.input_channel = 3
