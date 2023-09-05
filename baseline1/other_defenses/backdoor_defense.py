@@ -230,6 +230,7 @@ class BackdoorDefense():
 
         self.poison_set_dir = supervisor.get_poison_set_dir(args)
         model_path = supervisor.get_model_dir(args)
+        print('model_path:', model_path)
         if args.modelname == 'resnet18':
             arch = config.arch[args.dataset]
         elif args.modelname == 'vgg16':
