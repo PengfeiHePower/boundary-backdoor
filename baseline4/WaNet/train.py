@@ -59,6 +59,16 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
     total_time = 0
 
     avg_acc_cross = 0
+    
+    #load boundary poisonId
+    if opt.sampling == 'boundary':
+        if opt.poisonId == None:
+            raise Exception("PoisonId can not be empty!!!")
+        else:
+            poisonId = np.loadtxt(opt.poisonId).tolist()
+        import random
+        pnum = int(len(train_dl.dataset) * rate_bd)
+        poisonId = random.sample(poisonId, pnum)
 
     for batch_idx, (inputs, targets) in enumerate(train_dl):
         optimizerC.zero_grad()
@@ -77,17 +87,20 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
         grid_temps2 = torch.clamp(grid_temps2, -1, 1)
 
         #change sampling here
-        inputs_bd = F.grid_sample(inputs[:num_bd], grid_temps.repeat(num_bd, 1, 1, 1), align_corners=True)
-        if opt.attack_mode == "all2one":
-            targets_bd = torch.ones_like(targets[:num_bd]) * opt.target_label
-        if opt.attack_mode == "all2all":
-            targets_bd = torch.remainder(targets[:num_bd] + 1, opt.num_classes)
+        if opt.sampling == 'random':
+            inputs_bd = F.grid_sample(inputs[:num_bd], grid_temps.repeat(num_bd, 1, 1, 1), align_corners=True)
+            if opt.attack_mode == "all2one":
+                targets_bd = torch.ones_like(targets[:num_bd]) * opt.target_label
+            if opt.attack_mode == "all2all":
+                targets_bd = torch.remainder(targets[:num_bd] + 1, opt.num_classes)
 
-        inputs_cross = F.grid_sample(inputs[num_bd : (num_bd + num_cross)], grid_temps2, align_corners=True)
+            inputs_cross = F.grid_sample(inputs[num_bd : (num_bd + num_cross)], grid_temps2, align_corners=True)
 
-        total_inputs = torch.cat([inputs_bd, inputs_cross, inputs[(num_bd + num_cross) :]], dim=0)
-        total_inputs = transforms(total_inputs)
-        total_targets = torch.cat([targets_bd, targets[num_bd:]], dim=0)
+            total_inputs = torch.cat([inputs_bd, inputs_cross, inputs[(num_bd + num_cross) :]], dim=0)
+            total_inputs = transforms(total_inputs)
+            total_targets = torch.cat([targets_bd, targets[num_bd:]], dim=0)
+        elif opt.sampling == 'boundary':
+            
         start = time()
         total_preds = netC(total_inputs)
         total_time += time() - start
