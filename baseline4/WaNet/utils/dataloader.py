@@ -158,7 +158,7 @@ def get_dataloader(opt, train=True, pretensor_transform=False):
         dataset = CelebA_attr(opt, split, transform)
     else:
         raise Exception("Invalid dataset")
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.bs, num_workers=opt.num_workers, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.bs, num_workers=opt.num_workers, shuffle=False)
     return dataloader
 
 

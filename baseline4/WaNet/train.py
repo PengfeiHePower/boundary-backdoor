@@ -88,19 +88,35 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
 
         #change sampling here
         if opt.sampling == 'random':
-            inputs_bd = F.grid_sample(inputs[:num_bd], grid_temps.repeat(num_bd, 1, 1, 1), align_corners=True)
-            if opt.attack_mode == "all2one":
-                targets_bd = torch.ones_like(targets[:num_bd]) * opt.target_label
-            if opt.attack_mode == "all2all":
-                targets_bd = torch.remainder(targets[:num_bd] + 1, opt.num_classes)
-
-            inputs_cross = F.grid_sample(inputs[num_bd : (num_bd + num_cross)], grid_temps2, align_corners=True)
-
-            total_inputs = torch.cat([inputs_bd, inputs_cross, inputs[(num_bd + num_cross) :]], dim=0)
-            total_inputs = transforms(total_inputs)
-            total_targets = torch.cat([targets_bd, targets[num_bd:]], dim=0)
+            id_bs = list(range(bs))
+            random.shuffle(id_bs)
+            id_bd = id_bs[:num_bd]
+            id_nobd = id_bs[num_bd:]
+            id_cross = id_bs[num_bd : (num_bd + num_cross)]
+            id_nocross = id_bs[(num_bd + num_cross):]
         elif opt.sampling == 'boundary':
-            
+            id_dict = {}
+            id_bs = list(range(bs))
+            id_data = list(range(opt.bs*batch_idx, opt.bs*batch_idx+bs))
+            for key, value in zip(id_bs, id_data):
+                id_dict[key] = value
+            id_bd = [x for x in id_bs if id_dict[x] in poisonId]
+            id_nobd = [x for x in id_bs if x not in id_bd]
+            id_cross = id_nobd[:num_cross]
+            id_nocross = id_nobd[num_cross:]
+        
+        inputs_bd = F.grid_sample(inputs[id_bd], grid_temps.repeat(num_bd, 1, 1, 1), align_corners=True)
+        if opt.attack_mode == "all2one":
+                targets_bd = torch.ones_like(targets[id_bd]) * opt.target_label
+        if opt.attack_mode == "all2all":
+                targets_bd = torch.remainder(targets[id_bd] + 1, opt.num_classes)
+
+        inputs_cross = F.grid_sample(inputs[id_cross], grid_temps2, align_corners=True)
+
+        total_inputs = torch.cat([inputs_bd, inputs_cross, inputs[id_nocross]], dim=0)
+        total_inputs = transforms(total_inputs)
+        total_targets = torch.cat([targets_bd, targets[id_nobd]], dim=0)
+
         start = time()
         total_preds = netC(total_inputs)
         total_time += time() - start
@@ -119,13 +135,13 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
         total_bd += num_bd
         total_cross += num_cross
         total_clean_correct += torch.sum(
-            torch.argmax(total_preds[(num_bd + num_cross) :], dim=1) == total_targets[(num_bd + num_cross) :]
+            torch.argmax(total_preds[id_nocross], dim=1) == total_targets[id_nocross]
         )
-        total_bd_correct += torch.sum(torch.argmax(total_preds[:num_bd], dim=1) == targets_bd)
-        if num_cross:
+        total_bd_correct += torch.sum(torch.argmax(total_preds[id_bd], dim=1) == targets_bd)
+        if num_cross: 
             total_cross_correct += torch.sum(
-                torch.argmax(total_preds[num_bd : (num_bd + num_cross)], dim=1)
-                == total_targets[num_bd : (num_bd + num_cross)]
+                torch.argmax(total_preds[id_cross], dim=1)
+                == total_targets[id_cross]
             )
             avg_acc_cross = total_cross_correct * 100.0 / total_cross
 
@@ -158,8 +174,8 @@ def train(netC, optimizerC, schedulerC, train_dl, noise_grid, identity_grid, tf_
 
         # Image for tensorboard
         if batch_idx == len(train_dl) - 2:
-            residual = inputs_bd - inputs[:num_bd]
-            batch_img = torch.cat([inputs[:num_bd], inputs_bd, total_inputs[:num_bd], residual], dim=2)
+            residual = inputs_bd - inputs[id_bd]
+            batch_img = torch.cat([inputs[id_bd], inputs_bd, total_inputs[id_bd], residual], dim=2)
             batch_img = denormalizer(batch_img)
             batch_img = F.upsample(batch_img, scale_factor=(4, 4))
             grid = torchvision.utils.make_grid(batch_img, normalize=True)

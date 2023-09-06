@@ -4,7 +4,7 @@ import argparse
 def get_arguments():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--data_root", type=str, default="/home/ubuntu/temps/")
+    parser.add_argument("--data_root", type=str, default="~/Documents/cse-resarch/data/")
     parser.add_argument("--checkpoints", type=str, default="./checkpoints")
     parser.add_argument("--temps", type=str, default="./temps")
     parser.add_argument("--device", type=str, default="cuda")
@@ -33,6 +33,6 @@ def get_arguments():
         "--grid-rescale", type=float, default=1
     )  # scale grid values to avoid pixel values going out of [-1, 1]. For example, grid-rescale = 0.98
     parser.add_argument("--sampling", type=str, default='random', help='random or boundary')
-    parser.add_argument("--poisonId", type=str, help='directory of poisoned ids')
+    parser.add_argument("--poisonId", type=str, default = '~/Documents/cse-resarch/boundary-backdoor/hidden-repre/vulnerable/cifar10/fgsm-rn18-all50000-e02/ids_3.txt', help='directory of poisoned ids')
 
     return parser
