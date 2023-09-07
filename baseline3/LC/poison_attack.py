@@ -98,6 +98,7 @@ class DataPoisoningAttack:
         num_to_poison = round(num_examples_after_filtering * poisoning_proportion)
 
         # Select num_to_poison that have a label in the filter
+        # change this part, random and boundary
         if confidence_ordering is None: # select randomly
             indices = np.random.permutation(num_examples)
         else: # select the lowest confidence

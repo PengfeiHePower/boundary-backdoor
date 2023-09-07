@@ -10,3 +10,6 @@ models
 # other
 .vscode
 job_result.json
+
+*.out
+*.aa
