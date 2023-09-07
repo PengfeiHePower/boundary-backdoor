@@ -63,7 +63,10 @@ if args.log:
 
 save_path = supervisor.get_cleansed_set_indices_dir(args)
 
-arch = config.arch[args.dataset]
+if args.modelname == 'resnet18':
+    arch = config.arch[args.dataset]
+elif args.modelname == 'vgg16':
+    arch = config.arch2[args.dataset]
 
 if args.dataset == 'cifar10':
 
