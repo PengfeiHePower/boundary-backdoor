@@ -1,0 +1,9 @@
+
+Lmod is automatically replacing "Python/3.6.4" with "Conda/3".
+
+/mnt/ufs18/home-016/hepengf1/Documents/cse-resarch/boundary-backdoor/baseline2/./resource/label-consistent/craft_adv_dataset.py:303: SyntaxWarning: "is" with a literal. Did you mean "=="?
+  if self._attack_mode is "only_original":
+Traceback (most recent call last):
+  File "/mnt/ufs18/home-016/hepengf1/Documents/cse-resarch/boundary-backdoor/baseline2/./resource/label-consistent/craft_adv_dataset.py", line 5, in <module>
+    import sys, yaml, os
+ModuleNotFoundError: No module named 'yaml'

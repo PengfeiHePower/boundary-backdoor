@@ -10,6 +10,8 @@ from typing import Callable, Union, List
 
 
 def generate_single_target_attack_train_poison_index(
+        sampling,
+        poisonID,
         targets:Union[np.ndarray, List],
         tlabel: int,
         pratio: Union[float, None] = None,
@@ -66,6 +68,8 @@ def generate_single_target_attack_train_poison_index(
 from utils.bd_label_transform.backdoor_label_transform import *
 from typing import Optional
 def generate_poison_index_from_label_transform(
+        sampling,
+        poisonID,
         original_labels: Union[np.ndarray, List],
         label_transform: Callable,
         train: bool = True,
@@ -107,14 +111,25 @@ def generate_poison_index_from_label_transform(
         else:
             p_num = None
             pratio = 1
-
-        if p_num is not None: #random generated poison index
-            select_position = np.random.choice(len(original_labels), size = p_num, replace=False)
-        elif pratio is not None:
-            select_position = np.random.choice(len(original_labels), size=round(len(original_labels) * pratio), replace=False)
-        else:
-            raise SystemExit('p_num or pratio must be given')
-        logging.info(f'poison num:{len(select_position)},real pratio:{len(select_position) / len(original_labels)}')
+        if sampling == 'random':
+            if p_num is not None: #random generated poison index
+                select_position = np.random.choice(len(original_labels), size = p_num, replace=False)
+            elif pratio is not None:
+                select_position = np.random.choice(len(original_labels), size=round(len(original_labels) * pratio), replace=False)
+            else:
+                raise SystemExit('p_num or pratio must be given')
+            logging.info(f'poison num:{len(select_position)},real pratio:{len(select_position) / len(original_labels)}')
+        elif sampling == 'boundary':
+            if poisonID == None:
+                raise Exception("poisonID can not be empty!!")
+            else:
+                indices = np.loadtxt(poisonID)
+            if p_num is not None: #random generated poison index
+                select_position = np.random.choice(indices, size = p_num, replace=False)
+            elif pratio is not None:
+                select_position = np.random.choice(indices, size=round(len(original_labels) * pratio), replace=False)
+            else:
+                raise SystemExit('p_num or pratio must be given')
 
         poison_index = np.zeros(len(original_labels))
         poison_index[select_position] = 1

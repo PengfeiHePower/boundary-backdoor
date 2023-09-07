@@ -80,7 +80,7 @@ class DataPoisoningAttack:
         if reduced_amplitude == "none":
             self.reduced_amplitude = None
 
-    def select_indices_to_poison(self, labels, poisoning_proportion=1.0, *, apply_to="all", confidence_ordering=None):
+    def select_indices_to_poison(self, labels, sampling, poisonID, poisoning_proportion=1.0, *, apply_to="all", confidence_ordering=None):
         assert poisoning_proportion >= 0
         assert poisoning_proportion <= 1
 
@@ -99,8 +99,13 @@ class DataPoisoningAttack:
 
         # Select num_to_poison that have a label in the filter
         # change this part, random and boundary
-        if confidence_ordering is None: # select randomly
+        if confidence_ordering is None and sampling == 'random': # select randomly
             indices = np.random.permutation(num_examples)
+        elif sampling == 'boundary':
+            if poisonID == None:
+                raise Exception("poisonID can not be empty!!")
+            else:
+                indices = np.loadtxt(self.poisonID)
         else: # select the lowest confidence
             indices = np.argsort(confidence_ordering)
         indices = indices[np.isin(labels[indices], apply_to_filter)]

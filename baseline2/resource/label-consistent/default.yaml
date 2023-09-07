@@ -2,7 +2,7 @@ amp: False
 device: cuda:0
 client_optimizer: sgd
 dataset: cifar10
-dataset_path: ../../data
+dataset_path: ~/Documents/cse-resarch/data
 frequency_save: 100
 batch_size: 128
 lr: 0.01
