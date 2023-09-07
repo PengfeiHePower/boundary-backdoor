@@ -36,6 +36,7 @@ parser.add_argument('-sampling', type=str, default='random', help='sampling stre
 
 
 args = parser.parse_args()
+print(args)
 
 if args.trigger is None:
     args.trigger = config.trigger_default[args.poison_type]
