@@ -29,8 +29,12 @@ transform_train = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-trainset = torchvision.datasets.CIFAR10(
-    root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
+# trainset = torchvision.datasets.CIFAR10(
+#     root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
+# trainloader = torch.utils.data.DataLoader(
+#     trainset, batch_size=1, shuffle=False, num_workers=2)
+trainset = torchvision.datasets.CIFAR100(
+    root='~/Documents/cse-resarch/data/cifar100', train=True, download=True, transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=1, shuffle=False, num_workers=2)
 # testset = torchvision.datasets.CIFAR10(
@@ -38,8 +42,8 @@ trainloader = torch.utils.data.DataLoader(
 # testloader = torch.utils.data.DataLoader(
 #     testset, batch_size=1, shuffle=False, num_workers=2)
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer',
-           'dog', 'frog', 'horse', 'ship', 'truck')
+# classes = ('plane', 'car', 'bird', 'cat', 'deer',
+#            'dog', 'frog', 'horse', 'ship', 'truck')
 
 savepath = 'synthesis/cifar10/adversarial_data/' + args.model
 

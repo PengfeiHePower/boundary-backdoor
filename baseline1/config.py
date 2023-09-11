@@ -10,6 +10,7 @@ data_dir = '~/Documents/cse-resarch/data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 target_class = {
     'cifar10' : 3,
+    'cifar100' : 3,
     'synthesis-cifar10' : 3,
     'gtsrb' : 2
 }
@@ -50,12 +51,14 @@ trigger_default = {
 arch = {
     'cifar10': resnet.ResNet18,
     'synthesis-cifar10': resnet.ResNet18,
+    'cifar100': resnet.ResNet18,
     'gtsrb' : resnet.ResNet18,
     'abl':  wresnet.WideResNet
 }
 
 arch2 = {
     'cifar10': vgg.vgg16_bn,
+    'cifar100': vgg.vgg16_bn,
     'synthesis-cifar10': vgg.vgg16_bn,
     'gtsrb' : vgg.vgg16_bn,
     'abl':  wresnet.WideResNet
@@ -64,6 +67,12 @@ arch2 = {
 # adapitve-patch triggers for different datasets
 adaptive_patch_train_trigger_names = {
     'cifar10': [
+        'phoenix_corner_32.png',
+        'firefox_corner_32.png',
+        'badnet_patch4_32.png',
+        'trojan_square_32.png',
+    ],
+    'cifar100': [
         'phoenix_corner_32.png',
         'firefox_corner_32.png',
         'badnet_patch4_32.png',
@@ -90,6 +99,12 @@ adaptive_patch_train_trigger_alphas = {
         0.5,
         0.3,
     ],
+    'cifar100': [
+        0.5,
+        0.2,
+        0.5,
+        0.3,
+    ],
     'synthesis-cifar10': [
         0.5,
         0.2,
@@ -109,6 +124,10 @@ adaptive_patch_test_trigger_names = {
         'phoenix_corner_32.png',
         'badnet_patch4_32.png',
     ],
+    'cifar100': [
+        'phoenix_corner_32.png',
+        'badnet_patch4_32.png',
+    ],
     'synthesis-cifar10': [
         'phoenix_corner_32.png',
         'badnet_patch4_32.png',
@@ -121,6 +140,10 @@ adaptive_patch_test_trigger_names = {
 
 adaptive_patch_test_trigger_alphas = {
     'cifar10': [
+        1,
+        1,
+    ],
+    'cifar100': [
         1,
         1,
     ],

@@ -39,22 +39,32 @@ data_transform = data_transform_no_aug if args.no_aug else data_transform_aug
 
 
 batch_size = 256
-learning_rate = 0.1
-num_classes = 10
-arch = resnet.ResNet18
+# learning_rate = 0.1
+# num_classes = 10
+# arch = resnet.ResNet18
 momentum = 0.9
 weight_decay = 1e-4
-milestones = torch.tensor([100, 150])
-n_epochs = 200
-
-trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True,
+# milestones = torch.tensor([100, 150])
+# n_epochs = 200
+if args.dataset == 'cifar10':
+    trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True,
                                         download=False, transform=data_transform)
-train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+    train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                         shuffle=True, num_workers=8)
 
-testset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=False,
+    testset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=False,
                                     download=False, transform=data_transform)
-test_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+                                        shuffle=False, num_workers=8)
+elif args.dataset == 'cifar100':
+    trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True,
+                                        download=True, transform=data_transform)
+    train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+                                        shuffle=True, num_workers=8)
+
+    testset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=False,
+                                    download=True, transform=data_transform)
+    test_loader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
                                         shuffle=False, num_workers=8)
 
 if args.dataset == 'cifar10':
@@ -73,7 +83,17 @@ if args.dataset == 'cifar10':
 
 elif args.dataset == 'cifar100':
     num_classes = 100
-    raise NotImplementedError('<To Be Implemented> Dataset = %s' % args.dataset)
+    if args.model == 'resnet18':
+        arch = config.arch[args.dataset]
+    elif args.model == 'vgg16':
+        arch = config.arch2[args.dataset]
+    momentum = 0.9
+    weight_decay = 1e-4
+    if args.epoch == 200: milestones = torch.tensor([100, 150])
+    elif args.epoch == 80: milestones = torch.tensor([30, 50])
+    elif args.epoch == 40: milestones = torch.tensor([15, 30])
+    backdoor_epochs = args.epoch
+    learning_rate = 0.1
 elif args.dataset == 'gtsrb':
     num_classes = 43
     raise NotImplementedError('<To Be Implemented> Dataset = %s' % args.dataset)
@@ -95,7 +115,7 @@ criterion = nn.CrossEntropyLoss().cuda()
 optimizer = torch.optim.SGD(model.parameters(), learning_rate, momentum=momentum, weight_decay=weight_decay)
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones)
 
-for epoch in range(1, n_epochs + 1):  # train backdoored base model
+for epoch in range(1, args.epoch + 1):  # train backdoored base model
     # Train
     model.train()
     for data, target in tqdm(train_loader):
@@ -108,7 +128,7 @@ for epoch in range(1, n_epochs + 1):  # train backdoored base model
     print('<Vanilla Training> Train Epoch: {} \tLoss: {:.6f}, lr: {}'.format(epoch, loss.item(), optimizer.param_groups[0]['lr']))
     scheduler.step()
 
-    tools.test(model=model, test_loader=test_loader)
+    tools.test(model=model, test_loader=test_loader, num_classes=num_classes)
     if args.no_aug:
         torch.save(model.module.state_dict(), 'models/%s_%s_vanilla_no_aug.pt' % (args.dataset, args.model))
         torch.save(model.module.state_dict(), f'models/{args.dataset}_{args.model}_vanilla_no_aug_seed={args.seed}.pt')
