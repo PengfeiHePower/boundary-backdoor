@@ -15,11 +15,13 @@ from models import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 parser = argparse.ArgumentParser(description='adversarial')
+parser.add_argument('--dataset', default='cifar10', type=str, help='[cifar10, cifar100, tiny imagenet]')
 parser.add_argument('--epsilon', default=4/255, type=float,
                     help='noise size')
 parser.add_argument('--model', type=str, default=None)
 parser.add_argument('--checkpoint', type=str, default='./pretrained_models/resnet18.pth')
 parser.add_argument('--rate', type=float, default = 0.1)
+parser.add_argument('--savepath', type=str, default='synthesis/cifar10/adversarial_data/')
 args = parser.parse_args()
 print(args)
 
@@ -29,23 +31,17 @@ transform_train = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-# trainset = torchvision.datasets.CIFAR10(
-#     root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
-# trainloader = torch.utils.data.DataLoader(
-#     trainset, batch_size=1, shuffle=False, num_workers=2)
-trainset = torchvision.datasets.CIFAR100(
-    root='~/Documents/cse-resarch/data/cifar100', train=True, download=True, transform=transform_train)
-trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=1, shuffle=False, num_workers=2)
-# testset = torchvision.datasets.CIFAR10(
-#     root='~/Documents/cse-resarch/data', train=False, download=False, transform=transform_train)
-# testloader = torch.utils.data.DataLoader(
-#     testset, batch_size=1, shuffle=False, num_workers=2)
+if args.dataset == 'cifar10':
+    trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=2)
+elif args.dataset == 'cifar100':
+    trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True, download=True, transform=transform_train)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=2)
 
 # classes = ('plane', 'car', 'bird', 'cat', 'deer',
 #            'dog', 'frog', 'horse', 'ship', 'truck')
 
-savepath = 'synthesis/cifar10/adversarial_data/' + args.model
+savepath = args.savepath
 
 if not os.path.exists(savepath):
     os.makedirs(savepath)
