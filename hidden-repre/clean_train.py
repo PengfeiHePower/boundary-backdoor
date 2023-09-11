@@ -18,6 +18,8 @@ from torchvision.datasets import CIFAR10
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 parser = argparse.ArgumentParser(description='clean-train')
+parser.add_argument('--dataset', default='cifar10', type=str, help='[cifar10, cifar100, tiny imagenet]')
+parser.add_argument('--model', default = 'renset18', type=str, help='[resnet18, vgg16]')
 parser.add_argument('--lr_max', default=0.1, type=float, help='learning rate')
 parser.add_argument('--batch', default=256, type=int, help='batch size')
 parser.add_argument('--epochs', default = 200, type=int, help='training epochs')
@@ -73,24 +75,46 @@ def test(epoch, net, testloader):
     torch.save(state, args.modelsaver+'.pt')
 
 #prepare data
-transform_train = transforms.Compose([
+if args.dataset == 'cifar10':
+    transform_train = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
     ])
 
-transform_test = transforms.Compose([
+    transform_test = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True, download=False, transform=transform_train)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch, shuffle=True, num_workers=4)
+    trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch, shuffle=True, num_workers=4)
 
-testset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=False, download=False, transform=transform_test)
-testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
+    testset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=False, download=False, transform=transform_test)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
+    num_classes = 10
+elif args.dataset == 'cifar100':
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
+
+    transform_test = transforms.Compose([
+    transforms.ToTensor(),
+])
+
+    trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True, download=False, transform=transform_train)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch, shuffle=True, num_workers=4)
+
+    testset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=False, download=False, transform=transform_test)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
+    num_classes = 100
 # prepare model
 print('==> Building model..')
-net = ResNet18(num_classes=100)
+if args.model == 'resnet18':
+    net = ResNet18(num_classes=num_classes)
+elif args.model == 'vgg16':
+    net = VGG('VGG16', num_classes=num_classes)
 net = net.to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=args.lr_max, momentum=0.9, weight_decay=5e-4)
