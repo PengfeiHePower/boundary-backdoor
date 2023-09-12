@@ -34,9 +34,11 @@ transform_train = transforms.Compose([
 if args.dataset == 'cifar10':
     trainset = torchvision.datasets.CIFAR10(root='~/Documents/cse-resarch/data/cifar10', train=True, download=False, transform=transform_train)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=2)
+    num_classes=10
 elif args.dataset == 'cifar100':
     trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True, download=True, transform=transform_train)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=2)
+    num_classes=100
 
 # classes = ('plane', 'car', 'bird', 'cat', 'deer',
 #            'dog', 'frog', 'horse', 'ship', 'truck')
@@ -65,9 +67,9 @@ eps = args.epsilon
 #prepare model
 print('==> Preparing model..')
 if args.model == 'resnet18':
-    net = ResNet18()
+    net = ResNet18(num_classes=num_classes)
 elif args.model == 'vgg16':
-    net = VGG('VGG16')
+    net = VGG('VGG16', num_classes=num_classes)
 net = net.to(device)
 checkpoint = torch.load(args.checkpoint)
 state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}

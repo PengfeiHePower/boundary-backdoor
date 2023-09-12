@@ -75,7 +75,7 @@ elif args.dataset == 'cifar100':
     data_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    train_set = datasets.CIFAR10(os.path.join(data_dir, 'cifar100'), train=True,
+    train_set = datasets.CIFAR100(os.path.join(data_dir, 'cifar100'), train=True,
                                     download=True, transform=data_transform)
     img_size = 32
     num_classes = 100

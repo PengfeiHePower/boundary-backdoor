@@ -13,7 +13,7 @@ import numpy as np
 
 from PIL import Image
 
-from torchvision.datasets import CIFAR10
+from torchvision.datasets import CIFAR10, CIFAR100
 from models import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -22,6 +22,7 @@ parser = argparse.ArgumentParser(description='vulnerable')
 parser.add_argument('--epsilon', default=0.2, type=float,
                     help='threshold for first and second label')
 parser.add_argument('--idsaver', default='vulnerable/cifar10/fgsm2-rn18-e02/', type=str)
+parser.add_argument('--dataset', default='cifar10', type=str, help='[cifar10, cifar100]')
 parser.add_argument('--trainpath', default='synthesis/cifar10/adversarial_data/fgsm2_train', type=str)
 parser.add_argument('--model', type=str, default=None)
 parser.add_argument('--checkpoint', type=str, default='./pretrained_models/resnet18.pth')
@@ -33,6 +34,29 @@ class PoisonTransferCIFAR10Pair(CIFAR10):
     """
     def __init__(self, datapath, root='~/Documents/cse-resarch/data/cifar10', train=True, transform=None, download=True):
         super(PoisonTransferCIFAR10Pair, self).__init__(root=root, train=train, download=download, transform=transform)
+        self.datapath = datapath
+        self.data = (np.load(self.datapath + '_img.npy').transpose([0, 2, 3, 1]) * 255).astype(np.uint8)
+        self.targets = np.load(self.datapath  + '_label.npy')
+
+    def __getitem__(self, index):
+        img, target = self.data[index], self.targets[index]
+        # print(img[0][0])
+        img = Image.fromarray(img)
+        # print("np.shape(img)", np.shape(img))
+
+        if self.transform is not None:
+            pos_1 = torch.clamp(self.transform(img), 0, 1)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return pos_1, target
+    
+class PoisonTransferCIFAR100Pair(CIFAR100):
+    """CIFAR100 Dataset.
+    """
+    def __init__(self, datapath, root='~/Documents/cse-resarch/data/cifar100', train=True, transform=None, download=True):
+        super(PoisonTransferCIFAR100Pair, self).__init__(root=root, train=train, download=download, transform=transform)
         self.datapath = datapath
         self.data = (np.load(self.datapath + '_img.npy').transpose([0, 2, 3, 1]) * 255).astype(np.uint8)
         self.targets = np.load(self.datapath  + '_label.npy')
@@ -63,14 +87,19 @@ transform_train = transforms.Compose([
 #     trainset, batch_size=1, shuffle=False, num_workers=2)
 
 ###for synthesis data
-# trainpath = 'synthesis/cifar10/adversarial_data/fgsm2_train'
-trainset = PoisonTransferCIFAR10Pair(datapath = args.trainpath, train=True, transform=transform_train, download=False)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=4)
+if args.dataset == 'cifar10':
+    trainset = PoisonTransferCIFAR10Pair(datapath = args.trainpath, train=True, transform=transform_train, download=False)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=4)
+    num_classes=10
+elif args.dataset == 'cifar100':
+    trainset = PoisonTransferCIFAR100Pair(datapath = args.trainpath, train=True, transform=transform_train, download=False)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=4)
+    num_classes=100
 
 
 
-classes = ('plane', 'car', 'bird', 'cat', 'deer',
-           'dog', 'frog', 'horse', 'ship', 'truck')
+# classes = ('plane', 'car', 'bird', 'cat', 'deer',
+#            'dog', 'frog', 'horse', 'ship', 'truck')
 
 eps = args.epsilon
 
@@ -78,9 +107,9 @@ eps = args.epsilon
 #prepare model
 print('==> Preparing model..')
 if args.model == 'resnet18':
-    net = ResNet18()
+    net = ResNet18(num_classes=num_classes)
 elif args.model == 'vgg16':
-    net = VGG('VGG16')
+    net = VGG('VGG16', num_classes=num_classes)
 net = net.to(device)
 checkpoint = torch.load(args.checkpoint)
 state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}
