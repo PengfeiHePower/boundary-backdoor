@@ -75,10 +75,13 @@ elif args.dataset == 'cifar100':
     data_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    train_set = datasets.CIFAR100(os.path.join(data_dir, 'cifar100'), train=True,
-                                    download=True, transform=data_transform)
+    from utils import synthesis_loader
+    if args.synpath == None:
+        raise  NotImplementedError('Synthesis path can not be empty!')
+    else:
+        train_set = synthesis_loader.PoisonTransferCIFAR10Pair(datapath = args.synpath, train=True, transform=data_transform, download=False)
     img_size = 32
-    num_classes = 100
+    num_classes = 10
 elif args.dataset == 'imagenette':
     raise  NotImplementedError('imagenette unsupported!')
 else:
