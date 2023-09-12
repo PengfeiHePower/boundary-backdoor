@@ -10,7 +10,7 @@ data_dir = '~/Documents/cse-resarch/data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 target_class = {
     'cifar10' : 3,
-    'cifar100' : 3,
+    'cifar100' : 67,
     'synthesis-cifar10' : 3,
     'gtsrb' : 2
 }
