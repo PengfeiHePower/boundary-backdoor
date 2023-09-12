@@ -102,7 +102,7 @@ def get_poison_transform(poison_type, dataset_name, target_class, source_class=1
     if trigger_name is None:
         trigger_name = config.trigger_default[poison_type]
 
-    if dataset_name in ['gtsrb','cifar10', 'cifar100', 'synthesis-cifar10']:
+    if dataset_name in ['gtsrb','cifar10', 'cifar100', 'synthesis-cifar10', 'cifar100']:
         img_size = 32
     elif dataset_name == 'imagenette':
         img_size = 224
@@ -124,6 +124,14 @@ def get_poison_transform(poison_type, dataset_name, target_class, source_class=1
         denormalizer = transforms.Compose([
             transforms.Normalize([-0.4914 / 0.247, -0.4822 / 0.243, -0.4465 / 0.261],
                                     [1 / 0.247, 1 / 0.243, 1 / 0.261])
+        ])
+    elif dataset_name == 'cifar100':
+        normalizer = transforms.Compose([
+            transforms.Normalize([0.5070, 0.4865, 0.4409], [0.2673, 0.2564, 0.2761])
+        ])
+        denormalizer = transforms.Compose([
+            transforms.Normalize([-0.5070 / 0.2673, -0.4865 / 0.2564, -0.4409 / 0.2761],
+                                    [1 / 0.2673, 1 / 0.2564, 1 / 0.2761])
         ])
     elif dataset_name == 'gtsrb':
         normalizer = transforms.Compose([

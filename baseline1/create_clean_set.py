@@ -48,8 +48,13 @@ elif args.dataset == 'cifar10':
     img_size = 32
     num_classes = 10
 elif args.dataset == 'cifar100':
-    print('<To Be Implemented> Dataset = %s' % args.dataset)
-    exit(0)
+    data_transform = transforms.Compose([
+        transforms.ToTensor()
+    ])
+    clean_set = datasets.CIFAR100(os.path.join(data_dir, 'cifar100'), train=False,
+                                  download=True, transform=data_transform)
+    img_size = 32
+    num_classes = 100
 elif args.dataset == 'imagenette':
     print('<To Be Implemented> Dataset = %s' % args.dataset)
     exit(0)

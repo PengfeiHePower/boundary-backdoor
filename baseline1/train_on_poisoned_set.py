@@ -97,6 +97,19 @@ elif args.dataset == 'gtsrb':
         # transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
     ])
 
+elif args.dataset == 'cifar100':
+    data_transform_aug = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomCrop(32, 4),
+            transforms.ToTensor(),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+    ])
+
+    data_transform = transforms.Compose([
+            transforms.ToTensor(),
+            # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+    ])
+
 else:
 
     raise NotImplementedError('dataset %s not supported' % args.dataset)
@@ -132,7 +145,15 @@ elif args.dataset == 'synthesis-cifar10':
 
 elif args.dataset == 'cifar100':
     num_classes = 100
-    raise NotImplementedError('<To Be Implemented> Dataset = %s' % args.dataset)
+    if args.model == 'resnet18':
+        arch = config.arch[args.dataset]
+    elif args.model == 'vgg16':
+        arch = config.arch2[args.dataset]
+    momentum = 0.9
+    weight_decay = 1e-4
+    epochs = 200
+    milestones = torch.tensor([100, 150])
+    learning_rate = 0.1
 
 elif args.dataset == 'gtsrb':
     num_classes = 43

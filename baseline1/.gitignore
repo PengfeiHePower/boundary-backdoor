@@ -6,3 +6,4 @@ core.*
 other_defenses/results/
 sbatch/
 models/
+*.pyc
