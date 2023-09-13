@@ -110,6 +110,33 @@ elif args.dataset == 'synthesis-cifar10':
     epochs = 200
     learning_rate = 0.1
 
+elif args.dataset == 'cifar100':
+
+    num_classes = 100
+
+    data_transform_aug = transforms.Compose([
+                                    transforms.RandomHorizontalFlip(),
+                                    transforms.RandomCrop(32, 4),
+                                    transforms.ToTensor(),
+                                    # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+                                ])
+
+    data_transform_no_aug = transforms.Compose([
+        transforms.ToTensor(),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+    ])
+
+    trigger_transform = transforms.Compose([
+        transforms.ToTensor(),
+        # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+    ])
+
+    momentum = 0.9
+    weight_decay = 1e-4
+    milestones = [100, 150]
+    epochs = 200
+    learning_rate = 0.1
+
 elif args.dataset == 'gtsrb':
 
     num_classes = 43

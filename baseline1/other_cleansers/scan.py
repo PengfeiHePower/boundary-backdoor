@@ -128,7 +128,10 @@ class SCAn:
             split_rst.append(subg)
             u1[k] = i_u1
             u2[k] = i_u2
-            class_score[k] = [k, i_sc, np.sum(selected_idx)]
+            print('k:', k)
+            print('i_sc shape:', i_sc)
+            print('np.sum(selected_idx):', np.sum(selected_idx))
+            class_score[k] = [k, i_sc[0][0], np.sum(selected_idx)]
 
         lc_model = dict()
         lc_model['sts'] = class_score

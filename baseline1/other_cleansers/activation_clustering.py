@@ -62,6 +62,8 @@ def cleanser(inspection_set, model, num_classes, args, clusters=2):
 
     if args.dataset == 'cifar10':
         threshold = 0.15
+    if args.dataset == 'cifar100':
+        threshold = 0.15
     elif args.dataset == 'synthesis-cifar10':
         threshold = 0.15
     elif args.dataset == 'gtsrb':
@@ -69,7 +71,7 @@ def cleanser(inspection_set, model, num_classes, args, clusters=2):
     elif args.dataset == 'imagenette':
         threshold = 0 # place holder, not used
     else:
-        raise NotImplementedError('dataset %s is not supported' % args.datasets)
+        raise NotImplementedError('dataset %s is not supported' % args.dataset)
 
     for target_class in range(num_classes):
 
