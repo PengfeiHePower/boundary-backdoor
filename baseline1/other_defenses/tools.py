@@ -223,6 +223,17 @@ def unpack_poisoned_train_set(args, batch_size=128, shuffle=False, data_transfor
                         transforms.ToTensor(),
                         transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
                 ])
+    elif args.dataset == 'cifar100':
+        if data_transform is None:
+            if args.no_normalize:
+                data_transform = transforms.Compose([
+                        transforms.ToTensor(),
+                ])
+            else:
+                data_transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+                ])
     elif args.dataset == 'gtsrb':
         if data_transform is None:
             if args.no_normalize:
@@ -333,6 +344,23 @@ def val_atk(args, model, split='test', batch_size=100):
                     transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
             ])
     elif args.dataset == 'synthesis-cifar10':
+        if args.no_normalize:
+            data_transform = transforms.Compose([
+                    transforms.ToTensor(),
+            ])
+            trigger_transform = transforms.Compose([
+                    transforms.ToTensor(),
+            ])
+        else:
+            data_transform = transforms.Compose([
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            ])
+            trigger_transform = transforms.Compose([
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            ])
+    elif args.dataset == 'cifar100':
         if args.no_normalize:
             data_transform = transforms.Compose([
                     transforms.ToTensor(),
