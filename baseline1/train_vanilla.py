@@ -8,6 +8,9 @@ from tqdm import tqdm
 import torchvision
 import config
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('device:', device)
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-no_aug', default=False, action='store_true')
@@ -109,9 +112,9 @@ else:
 model = arch(num_classes=num_classes)
 milestones = milestones.tolist()
 model = nn.DataParallel(model)
-model = model.cuda()
+model = model.to(device)
 
-criterion = nn.CrossEntropyLoss().cuda()
+criterion = nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.SGD(model.parameters(), learning_rate, momentum=momentum, weight_decay=weight_decay)
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones)
 
@@ -120,7 +123,7 @@ for epoch in range(1, args.epoch + 1):  # train backdoored base model
     model.train()
     for data, target in tqdm(train_loader):
         optimizer.zero_grad()
-        data, target = data.cuda(), target.cuda()  # train set batch
+        data, target = data.to(device), target.to(device)  # train set batch
         output = model(data)
         loss = criterion(output, target)
         loss.backward()
