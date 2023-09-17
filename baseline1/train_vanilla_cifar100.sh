@@ -6,6 +6,7 @@
 #SMATCH --mail-type=ALL
 #SBATCH --mail-user=hepengf1@msu.edu
 #SBATCH --output=logs/train_vinilla_cifar100_vgg16
+#SBATCH --gres=gpu:v100:1
 
 module load Conda/3
 module load Conda/3
