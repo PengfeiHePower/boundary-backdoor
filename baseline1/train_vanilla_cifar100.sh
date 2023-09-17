@@ -9,6 +9,6 @@
 
 module load Conda/3
 module load Conda/3
-source activate llm
+source activate bb
 
 python train_vanilla.py -dataset cifar100 -epoch 200 -model vgg16
