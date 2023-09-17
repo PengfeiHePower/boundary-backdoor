@@ -70,6 +70,12 @@ class ABL(backdoor_defense.BackdoorDefense):
             self.batch_size_isolation = 64
             self.batch_size_finetuning = 64
             self.batch_size_unlearning = 64
+        elif self.args.dataset == 'cifar100':
+            self.tuning_lr = 0.1
+            self.lr_finetuning_init = 0.1
+            self.batch_size_isolation = 64
+            self.batch_size_finetuning = 64
+            self.batch_size_unlearning = 64
         elif self.args.dataset == 'gtsrb':
             self.tuning_lr = 0.01
             self.lr_finetuning_init = 0.01

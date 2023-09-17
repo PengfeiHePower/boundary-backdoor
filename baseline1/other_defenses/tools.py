@@ -76,7 +76,36 @@ def generate_dataloader(dataset='cifar10', dataset_path='./data/', batch_size=12
             test_set = IMG_Dataset(data_dir=test_set_img_dir, label_path=test_set_label_path, transforms=data_transform)
             test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size, shuffle=True, drop_last=drop_last, num_workers=4, pin_memory=True)
             return test_loader
-    if dataset == 'synthesis-cifar10':
+    elif dataset == 'cifar100':
+        if data_transform is None:
+            data_transform = transforms.Compose([
+                transforms.ToTensor(),
+                # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261]),
+            ])
+        dataset_path = os.path.join(dataset_path, 'cifar100')
+        if split == 'train':
+            train_data = datasets.CIFAR100(root=dataset_path, train=True, download=False, transform=data_transform)
+            train_data_loader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=4, pin_memory=True)
+            return train_data_loader
+        elif split == 'std_test' or split == 'full_test':
+            test_data = datasets.CIFAR100(root=dataset_path, train=False, download=False, transform=data_transform)
+            test_data_loader = DataLoader(dataset=test_data, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=4, pin_memory=True)
+            return test_data_loader
+        elif split == 'valid' or split == 'val':
+            val_set_dir = os.path.join('clean_set', 'cifar100', 'clean_split')
+            val_set_img_dir = os.path.join(val_set_dir, 'data')
+            val_set_label_path = os.path.join(val_set_dir, 'clean_labels')
+            val_set = IMG_Dataset(data_dir=val_set_img_dir, label_path=val_set_label_path, transforms=data_transform)
+            val_loader = torch.utils.data.DataLoader(val_set, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=4, pin_memory=True)
+            return val_loader
+        elif split == 'test':
+            test_set_dir = os.path.join('clean_set', 'cifar100', 'test_split')
+            test_set_img_dir = os.path.join(test_set_dir, 'data')
+            test_set_label_path = os.path.join(test_set_dir, 'labels')
+            test_set = IMG_Dataset(data_dir=test_set_img_dir, label_path=test_set_label_path, transforms=data_transform)
+            test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size, shuffle=True, drop_last=drop_last, num_workers=4, pin_memory=True)
+            return test_loader
+    elif dataset == 'synthesis-cifar10':
         if data_transform is None:
             data_transform = transforms.Compose([
                 transforms.ToTensor(),

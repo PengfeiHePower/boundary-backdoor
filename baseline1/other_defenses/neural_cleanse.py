@@ -306,6 +306,14 @@ class NC(backdoor_defense.BackdoorDefense):
                 # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
             ])
             lr = 0.01
+        elif self.args.dataset == 'cifar100':
+            full_train_set = datasets.CIFAR100(root=os.path.join(config.data_dir, 'cifar100'), train=True, download=True, transform=transforms.ToTensor())
+            data_transform_aug = transforms.Compose([
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomCrop(32, 4),
+                # transforms.Normalize([0.4914, 0.4822, 0.4465], [0.247, 0.243, 0.261])
+            ])
+            lr = 0.01
         elif self.args.dataset == 'gtsrb':
             full_train_set = datasets.GTSRB(os.path.join(config.data_dir, 'gtsrb'), split='train', download=True, transform=transforms.Compose([transforms.Resize((32, 32)), transforms.ToTensor()]))
             data_transform_aug = transforms.Compose([
