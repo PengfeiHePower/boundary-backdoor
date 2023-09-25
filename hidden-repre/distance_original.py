@@ -73,9 +73,11 @@ state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}
 net.load_state_dict(state_dict)
 net.eval()
 
-poison_idx = torch.tensor(torch.load('poisonIds/'+args.attack+'/poison_indices')).tolist()
+idx_path = 'poisonIds/'+args.attack+'/poison_indices'
+print(idx_path)
+poison_idx = torch.tensor(torch.load(idx_path)).tolist()
 print(poison_idx)
-input(111)
+# input(111)
 class_center = torch.zeros(10, 10).to(device)
 num_class = torch.zeros(10)
 with torch.no_grad():
@@ -86,14 +88,24 @@ with torch.no_grad():
 
 for i in range(10):
     class_center[i,:] = class_center[i,:]/num_class[i]
-torch.save(class_center, file_path='poisonIds/'+args.attack+'/original_class_center.pth')
+torch.save(class_center, 'poisonIds/'+args.attack+'/original_class_center.pth')
 print('class_center Done.')
 
 class_center = torch.load('poisonIds/'+args.attack+'/original_class_center.pth').to(device)
+print('load class center..')
 
+dis_original = []
 with torch.no_grad():
     for ids in poison_idx:
         inputs, targets = trainset[ids][0].unsqueeze(0).to(device), trainset[ids][1]
         outputs = net(inputs).squeeze()
         dis = torch.norm(outputs-class_center[targets,:])
-print(dis)
+        dis_original.append(dis.item())
+print(dis_original)
+dis_original = sorted(dis_original)
+
+save_path = 'poisonIds/'+args.attack+'/original_distance.txt'
+with open(save_path, 'w') as file:
+    for item in dis_original:
+        file.write(str(item) + '\n')
+print('Saved..')
