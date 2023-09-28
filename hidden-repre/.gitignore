@@ -4,3 +4,4 @@ pretrained_models/
 figures/
 log/
 *.sh
+poisonIds/

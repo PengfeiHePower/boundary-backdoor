@@ -73,23 +73,24 @@ state_dict = {k.replace('module.', ''): v for k, v in checkpoint['net'].items()}
 net.load_state_dict(state_dict)
 net.eval()
 
-idx_path = 'poisonIds/'+args.attack+'/poison_indices'
+idx_path = 'poisonIds/'+args.attack+'/boundary.txt'
 print(idx_path)
-poison_idx = torch.tensor(torch.load(idx_path)).tolist()
+poison_idx = np.loadtxt(idx_path).tolist()
+# poison_idx = torch.tensor(torch.load(idx_path)).tolist()
 print(poison_idx)
 # input(111)
-class_center = torch.zeros(10, 10).to(device)
-num_class = torch.zeros(10)
-with torch.no_grad():
-    for i in range(len(trainset)):
-        inputs, targets = trainset[i][0].unsqueeze(0).to(device), trainset[i][1]
-        class_center[targets,:] += net(inputs).squeeze()
-        num_class[targets] += 1
+# class_center = torch.zeros(10, 10).to(device)
+# num_class = torch.zeros(10)
+# with torch.no_grad():
+#     for i in range(len(trainset)):
+#         inputs, targets = trainset[i][0].unsqueeze(0).to(device), trainset[i][1]
+#         class_center[targets,:] += net(inputs).squeeze()
+#         num_class[targets] += 1
 
-for i in range(10):
-    class_center[i,:] = class_center[i,:]/num_class[i]
-torch.save(class_center, 'poisonIds/'+args.attack+'/original_class_center.pth')
-print('class_center Done.')
+# for i in range(10):
+#     class_center[i,:] = class_center[i,:]/num_class[i]
+# torch.save(class_center, 'poisonIds/'+args.attack+'/original_class_center.pth')
+# print('class_center Done.')
 
 class_center = torch.load('poisonIds/'+args.attack+'/original_class_center.pth').to(device)
 print('load class center..')
@@ -97,6 +98,7 @@ print('load class center..')
 dis_original = []
 with torch.no_grad():
     for ids in poison_idx:
+        ids=int(ids)
         inputs, targets = trainset[ids][0].unsqueeze(0).to(device), trainset[ids][1]
         outputs = net(inputs).squeeze()
         dis = torch.norm(outputs-class_center[targets,:])
@@ -104,7 +106,7 @@ with torch.no_grad():
 print(dis_original)
 dis_original = sorted(dis_original)
 
-save_path = 'poisonIds/'+args.attack+'/original_distance.txt'
+save_path = 'poisonIds/'+args.attack+'/boundary_distance.txt'
 with open(save_path, 'w') as file:
     for item in dis_original:
         file.write(str(item) + '\n')
