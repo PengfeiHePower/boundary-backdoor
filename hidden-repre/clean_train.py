@@ -15,14 +15,16 @@ from PIL import Image
 from models import *
 from torchvision.datasets import CIFAR10
 
+import time
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 parser = argparse.ArgumentParser(description='clean-train')
-parser.add_argument('--dataset', default='cifar10', type=str, help='[cifar10, cifar100, tiny imagenet]')
-parser.add_argument('--model', default = 'renset18', type=str, help='[resnet18, vgg16]')
-parser.add_argument('--lr_max', default=0.1, type=float, help='learning rate')
+parser.add_argument('--dataset', default='cifar10', type=str, help='[cifar10, cifar100, tiny-imagenet, imagenet]')
+parser.add_argument('--model', default = 'resnet18', type=str, help='[resnet18, vgg16]')
+parser.add_argument('--lr_max', default=0.01, type=float, help='learning rate')
 parser.add_argument('--batch', default=256, type=int, help='batch size')
-parser.add_argument('--epochs', default = 200, type=int, help='training epochs')
+parser.add_argument('--epochs', default = 60, type=int, help='training epochs')
 parser.add_argument('--modelsaver', default = 'pretrained_models/cifar100_rn18')
 args = parser.parse_args()
 print(args)
@@ -102,29 +104,72 @@ elif args.dataset == 'cifar100':
     transform_test = transforms.Compose([
     transforms.ToTensor(),
 ])
-
     trainset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=True, download=False, transform=transform_train)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batch, shuffle=True, num_workers=4)
 
     testset = torchvision.datasets.CIFAR100(root='~/Documents/cse-resarch/data/cifar100', train=False, download=False, transform=transform_test)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
     num_classes = 100
+elif args.dataset == 'imagenet1k':
+    transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+    # Load ImageNet dataset
+    trainset = torchvision.datasets.ImageNet(root='/mnt/scratch/hepengf1/imagenet_1k', split='train', transform=transform)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=128, shuffle=True, num_workers=8)
+
+    testset = torchvision.datasets.ImageNet(root='/mnt/scratch/hepengf1/imagenet_1k', split='val', transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False, num_workers=8)
+    num_classes = 1000
+elif args.dataset == 'tiny-imagenet':
+    transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+    trainset = torchvision.datasets.ImageFolder(root='/mnt/scratch/hepengf1/tiny-imagenet-200/train', transform=transform)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=256, shuffle=True, num_workers=2)
+
+    testset = torchvision.datasets.ImageFolder(root='/mnt/scratch/hepengf1/tiny-imagenet-200/val', transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=256, shuffle=False, num_workers=2)
+    num_classes = 200
+
 # prepare model
 print('==> Building model..')
 if args.model == 'resnet18':
-    net = ResNet18(num_classes=num_classes)
+    import torchvision.models as models
+    net = models.resnet18(pretrained=False)
+    net.fc = nn.Linear(net.fc.in_features, num_classes)
+    # net = ResNet18(num_classes=num_classes)
+    print('Loaded model: ResNet18.')
 elif args.model == 'vgg16':
-    net = VGG('VGG16', num_classes=num_classes)
+    import torchvision.models as models
+    net = models.vgg16(pretrained=False)
+    num_features = net.classifier[6].in_features  # Get the number of inputs for the last layer
+    net.classifier[6] = torch.nn.Linear(num_features, num_classes)
+    # net = VGG('VGG16', num_classes=num_classes)
+    print('Loaded model: VGG16.')
 net = net.to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=args.lr_max, momentum=0.9, weight_decay=5e-4)
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], gamma=0.1)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[30, 50], gamma=0.1)
 
 # training
+total_start = time.time()
 for epoch in range(args.epochs): # 200 epochs
     print('\nEpoch: %d' % epoch)
     print('Training..')
+    start_time = time.time()
     train(epoch, net, optimizer, trainloader)
+    end_time = time.time()
+    print('training time:', end_time-start_time)
     print('Testing..')
     test(epoch, net, testloader)
+    end_time2 = time.time()
+    print('testing time:', end_time2-end_time)
+    print('One epoch time:', end_time2-start_time)
     scheduler.step()
+total_end = time.time()
+print('Total training time: %f' %(total_end-total_start))
